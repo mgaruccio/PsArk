@@ -10,7 +10,7 @@ Visit [Ark.io](https://www.ark.io) for official Ark related stuff ...
 
 Visit [ArkNode.net](https://www.arknode.net) for more community Ark related stuff and my donation address ...
 
-##**Installing the module**
+## **Installing the module**
 
 Download and Extract zip file to a work directory.
 
@@ -22,31 +22,31 @@ In the PSModulePath directory: `C:\Program Files\WindowsPowerShell\Modules\`
 
 You should have: `C:\Program Files\WindowsPowerShell\Modules\PsArk\`
 
-##**Using the module**
-####**Loading Module**
+## **Using the module**
+#### **Loading Module**
 To access the module cmdlets you first need to load it in memory using:
 > Import-Module PsArk
 
-####**Check Available Cmdlets**
+#### **Check Available Cmdlets**
 Once the module is loaded, you can list all available cmdlets using:
 > Get-Command \*PsArk*
 
-####**View Help and Usage Example of a given cmdlet.**
+#### **View Help and Usage Example of a given cmdlet.**
 Warning: Help might not exist for all cmdlets until release of v1.0.
 > Get-Help CommandName -Full
 
 Example:
 > Get-Help Set-PsArkConfiguration -Full
 
-##**Extra Scripts**
+## **Extra Scripts**
 
 I included some examples usage scripts in the `Scripts` sub-directory of the archive.
 
-##**Text Based Documentation**
+## **Text Based Documentation**
 
 For thoses who prefer using text files documentation, I auto-generated it and included it in the `Documentation` sub-directory of the archive.
 
-##**Troubleshooting & Common Error(s)**
+## **Troubleshooting & Common Error(s)**
 
 **It doesn’t work.**
 
@@ -65,4 +65,4 @@ Verify the configuration of the server (config.json) to allow your IP address in
 
 **Script is asking confirmation to execute when running it.**
 
->Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
