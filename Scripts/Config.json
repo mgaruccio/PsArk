@@ -1,0 +1,24 @@
+{
+	"Account": {
+		"DelegateName":       "",
+		"DelegateAddress":    "",
+		"DelegatePublicKey":  "",
+		"DelegateSecret":     "",
+		
+		"SenderName":         "",
+		"SenderAddress":      "",
+		"SenderPublicKey":    "",
+		"SenderSecret":       "",
+		"SenderVendorField":  "",
+		
+		"RecipientName":      "",
+		"RecipientAddress":   "",
+		"RecipientPublicKey": "",
+		"RecipientSecret":    ""
+	},
+	"Servers": [
+		"https://api.arknode.net/api/",
+		"",
+		""
+		]
+}

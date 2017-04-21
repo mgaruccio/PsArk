@@ -1,0 +1,6 @@
+2017-04-21	15:00	18:00	3.0 ReadMe Update
+								Creating initial files and directories.
+								Porting back initial data
+
+2017-04-20	19:30	20:00	0.5	Creation of the new project.
+								PsArk Logo integration.
