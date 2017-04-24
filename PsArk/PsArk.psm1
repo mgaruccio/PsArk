@@ -5,80 +5,97 @@ Author  :   Gr33nDrag0n
 History :   2017/04/24 - Release v0.1.0.0
             2017/04/20 - Creation of the module.
 
+Reference : https://github.com/LiskHQ/lisk-wiki/wiki/Lisk-API-Reference
+
 #### API Call Functions #############################################################
 
 # Account #--------------------------------------------------------------------------
 
-Get-PsArkAccount                                    v0.1.0.0 + Help		Public
-Get-PsArkAccountBalance                             
-Get-PsArkAccountPublicKey                           
-Get-PsArkAccountVote                                
-Get-PsArkAccountSecondSignature                     
+Get-PsArkAccount                                    v0.1.0.0 + Help     Public
+Get-PsArkAccountBalance
+Get-PsArkAccountPublicKey
+Get-PsArkAccountVote                                Struct              Public
+Get-PsArkAccountSecondSignature
 
-New-PsArkAccount                                    
-Open-PsArkAccount                                   
-Add-PsArkAccountVote                                
-Remove-PsArkAccountVote                             
-Add-PsArkAccountSecondSignature                     
+New-PsArkAccount
+Open-PsArkAccount
+Add-PsArkAccountVote
+Remove-PsArkAccountVote
+Add-PsArkAccountSecondSignature
 
 # Loader #---------------------------------------------------------------------------
 
-Get-PsArkLoadingStatus                              v0.1.0.0 + Help		Public
-Get-PsArkSyncStatus                                 v0.1.0.0 + Help		Public
-Get-PsArkBlockReceiptStatus							v0.1.0.0 + Help		Public
+Get-PsArkLoadingStatus                              v0.1.0.0 + Help     Public
+Get-PsArkSyncStatus                                 v0.1.0.0 + Help     Public
+Get-PsArkBlockReceiptStatus                         v0.1.0.0 + Help     Public
 
 # Transactions #---------------------------------------------------------------------
 
-Get-PsArkTransaction                                
-Get-PsArkTransactionList                            
-Get-PsArkTransactionUnconfirmed                     
-Get-PsArkTransactionUnconfirmedList                 
+Get-PsArkTransaction
+Get-PsArkTransactionList
+Get-PsArkTransactionUnconfirmed
+Get-PsArkTransactionUnconfirmedList
 
-Send-PsArkTransaction                               
+Send-PsArkTransaction
 
 # Peers #----------------------------------------------------------------------------
 
-Get-PsArkPeer                                       
-Get-PsArkPeerList                                   
-Get-PsArkPeerListVersion                            
+Get-PsArkPeer                                       Struct              Public
+Get-PsArkPeerList                                   Struct              Public
+Get-PsArkPeerVersion                                Struct              Public
 
-# Blocks #---------------------------------------------------------------------------
+# Block / Blockchain #--------------------------------------------------------------
 
-Get-PsArkBlock                                      
-Get-PsArkBlockList                                  
-Get-PsArkBlockFee                                   
-Get-PsArkBlockHeight                                
-Get-PsArkBlockForged                                
+Get-PsArkBlockById                                  Struct              Public
+Get-PsArkBlockList                                  Struct              Public
+Get-PsArkBlockchainTransactionFee                   Struct              Public
+Get-PsArkBlockchainAllFee                           Struct              Public
+Get-PsArkBlockchainReward                           Struct              Public
+Get-PsArkBlockchainSupply                           Struct              Public
+Get-PsArkBlockchainHeight                           Struct              Public
+Get-PsArkBlockchainStatus                           Struct              Public
+Get-PsArkBlockchainNethash                          Struct              Public
+Get-PsArkBlockchainMilestone                        Struct              Public
 
 # Delegates #------------------------------------------------------------------------
 
-Get-PsArkDelegate                                   
-Get-PsArkDelegateList                               
-Get-PsArkDelegateVoterList                          
+Get-PsArkDelegateByPublicKey                        Struct              Public
+Get-PsArkDelegateByUsername                         Struct              Public
+Get-PsArkDelegateByTransactionId (Removed?)         Struct              Public
+Get-PsArkDelegateList                               Struct              Public
+Get-PsArkDelegateVoterList                          Struct              Public
+Get-PsArkDelegateCount                              Struct              Public
+Get-PsArkDelegateForgedByAccount                    Struct              Public
+Get-PsArkDelegateNextForgers                        Struct              Public
 
-Enable-PsArkDelegate                                
-Or
-New-PsArkDelegate                                   
+New-PsArkDelegateAccount                            Struct              Public
+Search-PsArkDelegate                                Struct              Public
+Enable-PsArkDelegateForging                         Struct              Public
+Disable-PsArkDelegateForging                        Struct              Public
 
-Enable-PsArkDelegateForging                         
-Disable-PsArkDelegateForging                        
+# Signature #------------------------------------------------------------------------
+
+Get-PsArkSignatureFee                               Struct              Public
+
+Add-PsArkSecondSignature                            Struct              Public
 
 # Multi-Signature #------------------------------------------------------------------
 
-Get-PsArkMultiSigPendingTransactionList             
-Get-PsArkMultiSigAccountList                        
+Get-PsArkMultiSigPendingTransactionList             Struct              Public
+Get-PsArkMultiSigAccountList                        Struct              Public
 
-New-PsArkMultiSigAccount                            
-Sign-PsArkMultiSigTransaction                       
+New-PsArkMultiSigAccount                            Struct              Public
+Approve-PsArkMultiSigTransaction                    Struct              Public
 
 #### Misc. Functions ################################################################
 
-Invoke-PsPsArkApiCall                               v0.l.0.0			Private
-Show-PsArkAbout                                     v0.l.0.0			Public
-ConvertTo-PsArkBase64                               v0.l.0.0			Private
-ConvertFrom-PsArkBase64                             v0.l.0.0			Private
-Export-PsArkCsv                                     
-Export-PsArkJson                                    
+Invoke-PsPsArkApiCall                               v0.l.0.0            Private
+Show-PsArkAbout                                     v0.l.0.0            Public
+ConvertTo-PsArkBase64                               v0.l.0.0            Private
+ConvertFrom-PsArkBase64                             v0.l.0.0            Private
+Export-PsArkCsv
+Export-PsArkXml
+Export-PsArkJson
 
 ##########################################################################################################################################>
 
@@ -86,7 +103,7 @@ $Script:PsArk_Version = 'v0.1.0.0'
 
 
 ##########################################################################################################################################################################################################
-### API Call: Accounts
+### API Call: Account
 ##########################################################################################################################################################################################################
 
 <#
@@ -96,13 +113,18 @@ $Script:PsArk_Version = 'v0.1.0.0'
 .DESCRIPTION
     Return a custom object with following properties:
 
-    address					: Address of account. [String]
-    unconfirmedBalance		: Unconfirmed balance of account. [Int32]
-    balance					: Balance of account. Integer,
-    publicKey				: Public key of account. Hex,
-    unconfirmedSignature	: If account enabled second signature, but it's still not confirmed. Boolean: true or false,
-    secondSignature			: If account enabled second signature. Boolean: true or false,
-    secondPublicKey			: Second signature public key. Hex
+    Address                    : Address of account. [String]
+    PublicKey                  : Public key of account. [String]
+    SecondPublicKey            : Second signature public key. [String]
+
+    Balance                    : Balance of account. [Int]
+    UnconfirmedBalance         : Unconfirmed balance of account. [Int]
+
+    SecondSignature            : If second signature is enabled. [Bool]
+    UnconfirmedSecondSignature : If second signature is enabled. (But it's still not confirmed.) [Bool]
+
+    MultiSignatures            : (No infos available.) [Array]
+    UnconfirmedMultiSignatures : (No infos available.) [Array]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -114,8 +136,8 @@ $Script:PsArk_Version = 'v0.1.0.0'
     Get-PsArkAccount -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 #>
 
-Function Get-PsArkAccount
-{
+Function Get-PsArkAccount {
+
     Param(
         [parameter(Mandatory = $True)]
         [System.String] $URL,
@@ -125,7 +147,18 @@ Function Get-PsArkAccount
         )
 
     $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts?address='+$Address )
-    if( $Output.success -eq $True ) { $Output.account }
+    if( $Output.success -eq $True )
+    {
+        $Output.account | Select-Object -Property  @{Label="Address";Expression={$_.address}}, `
+                                                   @{Label="PublicKey";Expression={$_.publicKey}}, `
+                                                   @{Label="SecondPublicKey";Expression={$_.secondPublicKey}}, `
+                                                   @{Label="Balance";Expression={$_.balance}}, `
+                                                   @{Label="UnconfirmedBalance";Expression={$_.unconfirmedBalance}}, `
+                                                   @{Label="SecondSignature";Expression={$_.secondSignature}}, `
+                                                   @{Label="UnconfirmedSecondSignature";Expression={$_.unconfirmedSignature}}, `
+                                                   @{Label="MultiSignatures";Expression={$_.multisignatures}}, `
+                                                   @{Label="UnconfirmedMultiSignatures";Expression={$_.u_multisignatures}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -223,6 +256,28 @@ Function Get-PsArkAccountPublicKey
     Get-PsArkAccountVote -Address AHWHRAW7XREEMYCTXRX4YR2PAIQGTGRX2M
 #>
 
+<#
+
+Get votes of account
+
+Get votes by account wallet address.
+
+GET /api/accounts/delegates/?address=address
+
+    address: Address of account. (String)
+
+Response
+
+{
+  "success": true,
+  "delegates": [
+      "array of of delegates object (see above delegate object response)"
+    ]
+}
+
+    Delegates Array includes: delegateId, address, publicKey, vote (# of votes), producedBlocks, missedBlocks, rate, productivity
+#>
+
 Function Get-PsArkAccountVote
 {
     [CmdletBinding()]
@@ -233,8 +288,6 @@ Function Get-PsArkAccountVote
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
-
-    if( $URL -eq '' ) { $URL = $Script:PsArk_URL }
 
     $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts/delegates?address='+$Address )
     if( $Output.success -eq $True ) { $Output.delegates }
@@ -437,7 +490,12 @@ Function Get-PsArkLoadingStatus
         )
 
     $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/loader/status' )
-    if( $Output.Success -eq $True ) { $Output | Select-Object -Property @{Label="Loaded";Expression={$_.loaded}}, @{Label="Now";Expression={$_.now}}, @{Label="BlocksCount";Expression={$_.blocksCount}} }
+    if( $Output.Success -eq $True )
+    {
+        $Output | Select-Object -Property  @{Label="Loaded";Expression={$_.loaded}}, `
+                                           @{Label="Now";Expression={$_.now}}, `
+                                           @{Label="BlocksCount";Expression={$_.blocksCount}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -449,10 +507,10 @@ Function Get-PsArkLoadingStatus
 .DESCRIPTION
     Return a custom object with following properties:
 
-    Syncing	: Sync. in progress? [Bool]
-    Blocks	: Number of blocks remaining to sync. [Int]
-    Height	: Total blocks in blockchain. [Int]
-    BlockID	: Current height block ID [String]
+    Syncing : Sync. in progress? [Bool]
+    Blocks  : Number of blocks remaining to sync. [Int]
+    Height  : Total blocks in blockchain. [Int]
+    BlockID : Current height block ID [String]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -470,7 +528,13 @@ Function Get-PsArkSyncStatus
         )
 
     $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/loader/status/sync' )
-    if( $Output.Success -eq $True ) { $Output | Select-Object -Property @{Label="Syncing";Expression={$_.syncing}}, @{Label="Blocks";Expression={$_.blocks}}, @{Label="Height";Expression={$_.height}}, @{Label="BlockID";Expression={$_.id}} }
+    if( $Output.Success -eq $True )
+    {
+        $Output | Select-Object -Property  @{Label="Syncing";Expression={$_.syncing}}, `
+                                           @{Label="Blocks";Expression={$_.blocks}}, `
+                                           @{Label="Height";Expression={$_.height}}, `
+                                           @{Label="BlockID";Expression={$_.id}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -642,7 +706,7 @@ Function Send-PsArkTransaction
 <#
 Get peer
 
-Get peer by ip and port
+Gets peer by IP address and port
 
 GET /api/peers/get?ip=ip&port=port
 
@@ -653,12 +717,20 @@ Response
 
 {
   "success": true,
-  "peer": "peer object"
+  "peer": {
+        "ip":"Requested ip. String",
+        "port":"Requested port. Integer",
+        "state":"1 - disconnected. 2 - connected. 0 - banned. Integer",
+        "os":"Operating system. String",
+        "version":"Lisk client version. String",
+        "broadhash":"Peer block propagation efficiency and reliability. String",
+        "height":"Blockchain height. Integer"
+  }
 }
 #>
 
-Function Get-PsArkPeer
-{
+Function Get-PsArkPeer {
+
     $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $Script:PsArk_URL+'peers' )
     if( $Output.success -eq $True ) { $Output.peers }
 }
@@ -668,13 +740,12 @@ Function Get-PsArkPeer
 <#
 Get peers list
 
-Get peers list by parameters.
+Gets list of peers from provided filter parameters.
 
-GET /api/peers?state=state&os=os&shared=shared&version=version&limit=limit&offset=offset&orderBy=orderBy
+GET /api/peers?state=state&os=os&version=version&limit=limit&offset=offset&orderBy=orderBy
 
-    state: State of peer. 1 - disconnected. 2 - connected. 0 - banned. (String)
+    state: State of peer. 1 - disconnected. 2 - connected. 0 - banned. (Integer)
     os: OS of peer. (String)
-    shared: Is peer shared? Boolean: true or false. (String)
     version: Version of peer. (String)
     limit: Limit to show. Max limit is 100. (Integer)
     offset: Offset to load. (Integer)
@@ -683,77 +754,95 @@ GET /api/peers?state=state&os=os&shared=shared&version=version&limit=limit&offse
 All parameters joins by "OR".
 
 Example:
-/api/peers?state=1&version=0.1.8 looks like: state=1 OR version=0.1.8
+/api/peers?state=1&version=0.3.2 looks like: state=1 OR version=0.3.2
 
 Response
-  "peers": ["list of peers"]
+
+{
+  "success": true,
+  "peers": [
+    "List of peers as objects (see below the peer object response)"
+  ]
+}
 #>
 
-Function Get-PsArkPeerList
-{
+Function Get-PsArkPeerList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get peer version and build time
+Get peer version, build time
+
+Gets a list peer versions and build times
 
 GET /api/peers/version
 
 Response
-  "version": "version of Lisk",
-  "build": "time of build"
+
+{
+  "success": true,
+  "version": "Version of Lisk. String",
+  "build": "Time of build. String"
+}
 #>
 
-Function Get-PsArkPeerListVersion
-{
+Function Get-PsArkPeerVersion {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
-### API Call: Blocks
+### API Call: Block / Blockchain
 ##########################################################################################################################################################################################################
 
 <#
-Get block by id.
+Get block
+
+Gets block by provided id.
 
 GET /api/blocks/get?id=id
 
     id: Id of block.
 
 Response
+
+{
+    "success": true,
     "block": {
         "id": "Id of block. String",
         "version": "Version of block. Integer",
         "timestamp": "Timestamp of block. Integer",
         "height": "Height of block. Integer",
         "previousBlock": "Previous block id. String",
-        "numberOfRequests": "Not using now. Will be removed in 0.2.0",
         "numberOfTransactions": "Number of transactions. Integer",
-        "numberOfConfirmations": "Not using now.",
         "totalAmount": "Total amount of block. Integer",
         "totalFee": "Total fee of block. Integer",
+        "reward": "Reward block. Integer",
         "payloadLength": "Payload length of block. Integer",
-        "requestsLength": "Not using now. Will be removed in 0.2.0",
-        "confirmationsLength": "Not using now.,
-        "payloadHash": "Payload hash. Hex",
+        "payloadHash": "Payload hash of block. Integer",
         "generatorPublicKey": "Generator public key. Hex",
         "generatorId": "Generator id. String.",
-        "generationSignature": "Generation signature. Not using. Will be removed in 0.2.0",
-        "blockSignature": "Block signature. Hex"
+        "blockSignature": "Block signature. Hex",
+        "confirmations": "Block confirmations. Integer",
+        "totalForged": "Total block forged. Integer"
     }
+}
 #>
 
-Function Get-PsArkBlock
-{
+Function Get-PsArkBlockById {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get all blocks.
+Get blocks
+
+Gets all blocks by provided filter(s).
 
 GET /api/blocks?generatorPublicKey=generatorPublicKey&height=height&previousBlock=previousBlock&totalAmount=totalAmount&totalFee=totalFee&limit=limit&offset=offset&orderBy=orderBy
 
@@ -772,71 +861,284 @@ Example:
     orderBy: field name to order by. Format: fieldname:orderType. Example: height:desc, timestamp:asc (String)
 
 Response
+
+{
+  "success": true,
   "blocks": [
-    "array of blocks"
+    "array of blocks (see below block object response)"
   ]
+}
 #>
 
-Function Get-PsArkBlockList
-{
+Function Get-PsArkBlockList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get blockchain fee percent
+Get blockchain fee
+
+Get transaction fee for sending "normal" transactions.
 
 GET /api/blocks/getFee
 
 Response
-  "fee": "fee percent"
+
+{
+  "success": true,
+  "fee": Integer
+}
 #>
 
-Function Get-PsArkBlockFee
-{
+Function Get-PsArkBlockchainTransactionFee {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get blockchain height.
+Get blockchain fees schedule
+
+Get transaction fee for all types of transactions.
+
+GET /api/blocks/getFees
+
+Response
+
+{
+  "success": true,
+  "fees":{
+    "send": Integer,
+    "vote": Integer,
+    "secondsignature": Integer,
+    "delegate": Integer,
+    "multisignature": Integer,
+    "dapp": Integer
+  }
+}
+#>
+
+Function Get-PsArkBlockchainAllFee {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get blockchain reward schedule
+
+Gets the forging reward for blocks.
+
+GET /api/blocks/getReward
+
+Response
+
+{
+  "success": true,
+  "reward": Integer
+}
+#>
+
+Function Get-PsArkBlockchainReward {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get supply of available Lisk
+
+Gets the total amount of Lisk in circulation
+
+GET /api/blocks/getSupply
+
+Response
+
+{
+  "success": true,
+  "supply": Integer
+}
+#>
+
+Function Get-PsArkBlockchainSupply {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+
+Get blockchain height
+
+Gets the blockchain height of the client.
 
 GET /api/blocks/getHeight
 
 Response
+
+{
+  "success": true,
   "height": "Height of blockchain. Integer"
+}
 #>
 
-Function Get-PsArkBlockHeight
-{
+Function Get-PsArkBlockchainHeight {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get amount forged by account.
+Gets status of height, fee, milestone, blockreward and supply
 
-GET /api/delegates/forging/getForgedByAccount?generatorPublicKey=generatorPublicKey
+Gets status of height, fee, milestone, blockreward and supply
 
-generatorPublicKey: generator id of block in hex. (String)
+GET /api/blocks/getStatus
 
 Response
-  "sum": "Forged amount. Integer"
+
+{
+  "success": true,
+  "height": Integer
+  "fee": Integer
+  "milestone": Integer
+  "reward": Integer
+  "supply": Integer
+}
 #>
 
-Function Get-PsArkBlockForged
-{
+Function Get-PsArkBlockchainStatus {
 
+    # TODO
 }
+
+##########################################################################################################################################################################################################
+
+<#
+Get blockchain nethash
+
+Gets the nethash of the blockchain on a client.
+
+GET /api/blocks/getNethash
+
+Response
+
+{
+  "success": true,
+  "nethash": "Nethash of the Blockchain. String"
+}
+#>
+
+Function Get-PsArkBlockchainNethash {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get blockchain milestone
+
+Gets the milestone of the blockchain on a client.
+
+GET /api/blocks/getMilestone
+
+Response
+
+{
+  "success": true,
+  "milestone": Integer
+}
+#>
+
+Function Get-PsArkBlockchainMilestone {
+
+    # TODO
+}
+
 
 ##########################################################################################################################################################################################################
 ### API Call: Delegates
 ##########################################################################################################################################################################################################
 
 <#
+Get delegate
+
+Gets delegate by public key.
+
+GET /api/delegates/get?publicKey=publicKey
+
+    publicKey: Public key of delegate account (String)
+
+Response
+
+{
+    "success": true,
+    "delegate": {
+        "username": "Username. String",
+        "address": "Address. String",
+        "publicKey": "Public key. String",
+        "vote": "Total votes. Integer",
+        "producedblocks": "Produced blocks. Integer",
+        "missedblocks": "Missed blocks. Integer",
+        "rate": "Ranking. Integer",
+        "approval": "Approval percentage. Float",
+        "productivity": "Productivity percentage. Float"
+    }
+}
+#>
+
+Function Get-PsArkDelegateByPublicKey {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get delegate
+
+Gets delegate by username.
+
+GET /api/delegates/get?username=username
+
+    username: Username of delegate account (String)
+
+Response
+
+{
+    "success": true,
+    "delegate": {
+        "username": "Username. String",
+        "address": "Address. String",
+        "publicKey": "Public key. String",
+        "vote": "Total votes. Integer",
+        "producedblocks": "Produced blocks. Integer",
+        "missedblocks": "Missed blocks. Integer",
+        "rate": "Ranking. Integer",
+        "approval": "Approval percentage. Float",
+        "productivity": "Productivity percentage. Float"
+    }
+}
+#>
+
+Function Get-PsArkDelegateByUsername {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+==> REMOVED ?
+
 Get delegate by transaction id.
 
 GET /api/delegates/get?id=transactionId
@@ -850,15 +1152,17 @@ Response
         "votes": "amount of stake voted for this delegate"
 #>
 
-Function Get-PsArkDelegate
-{
+Function Get-PsArkDelegateByTransactionId {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get delegates list.
+Get delegates list
+
+Gets list of delegates by provided filter.
 
 GET /api/delegates?limit=limit&offset=offset&orderBy=orderBy
 
@@ -867,26 +1171,25 @@ GET /api/delegates?limit=limit&offset=offset&orderBy=orderBy
     orderBy: Order by field (String)
 
 Response
-  delegates objects array"
-    Object includes:
-        delegateId,
-        address,
-        publicKey,
-        vote (# of votes),
-        producedBlocks,
-        missedBlocks,
-        rate,
-        productivity
+
+{
+  "success": true,
+  "delegates": "delegates objects array"
+}
+
+Delegates Array includes: delegateId, address, publicKey, vote (# of votes), producedBlocks, missedBlocks, rate, productivity
 #>
 
-Function Get-PsArkDelegateList
-{
+Function Get-PsArkDelegateList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
+Get voters
+
 Get voters of delegate.
 
 GET /api/delegates/voters?publicKey=publicKey
@@ -894,49 +1197,191 @@ GET /api/delegates/voters?publicKey=publicKey
 publicKey: Public key of delegate. (String)
 
 Response
+
   "accounts": [
-    "array of accounts who vote for delegate"
+    {
+      username: "Voter username. String",
+      address: "Voter address. String",
+      publicKey: "Voter public key. String",
+      balance: "Voter balance. String"
+    }
   ]
 #>
 
-Function Get-PsArkDelegateVoterList
-{
+Function Get-PsArkDelegateVoterList {
 
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get delegates count
+
+Get total count of registered delegates.
+
+GET /api/delegates/count
+
+Response
+
+{
+  "success": true,
+  "count": 101
+}
+#>
+
+Function Get-PsArkDelegateCount {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get forged by account
+
+Get amount of Lisk forged by an account.
+
+GET /api/delegates/forging/getForgedByAccount?generatorPublicKey=generatorPublicKey
+
+Required
+
+    generatorPublicKey: generator id of block in hex. (String)
+
+Optional
+
+    start: Sets the start time of the search - timestamp UNIX time. (String)
+    end: Sets the endtime of the search - timestamp UNIX time. (String)
+
+Response
+
+{
+  "success": true,
+  "fees": "Forged amount. Integer",
+  "rewards":"Forged amount. Integer",
+  "forged":"Forged amount. Integer"
+}
+#>
+
+Function Get-PsArkDelegateForgedByAccount {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get next forgers
+
+Get next delegate lining up to forge.
+
+GET /api/delegates/getNextForgers?limit=limit
+
+    limit: limits the amount of delegates returned, default 10, max 101 (Integer)
+
+Response
+
+{
+  "success": true,
+  "currentBlock": "Current block based on height. Integer",
+  "currentSlot": "Current slot based on time. Integer",
+  "delegates": [
+          "array of publicKeys. Strings"
+        ]
+}
+
+#>
+
+Function Get-PsArkDelegateNextForgers {
+
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
 Enable delegate on account
-Calls for delegates functional.
+
+WARNING: This operation have a COST!
+
+Puts request to create a delegate.
 
 PUT /api/delegates
 
 Request
+
+{
   "secret": "Secret key of account",
   "secondSecret": "Second secret of account",
   "username": "Username of delegate. String from 1 to 20 characters."
+}
 
 Response
-  "transaction": "transaction object"
 
-Function Enable-PsArkDelegate
 {
-
-}
-
-OR
-
-Function New-PsArkDelegate
-{
-
+   "success":true,
+   "transaction":{
+      "type": "Type of transaction. Integer",
+      "amount": "Amount. Integer",
+      "senderPublicKey": "Sender public key. String",
+      "requesterPublicKey": "Requester public key. String",
+      "timestamp": "Time. Integer",
+      "asset":{
+         "delegate":{
+            "username": "Delegate username. String",
+            "publicKey": "Delegate public key. String"
+         }
+      },
+      "recipientId": "Recipient address. String",
+      "signature": "Signature. String",
+      "signSignature": "Sign signature. String",
+      "id": "Tx ID. String",
+      "fee": "Fee. Integer",
+      "senderId": "Sender address. String",
+      "relays": "Propagation. Integer",
+      "receivedAt": "Time. String"
+   }
 }
 #>
+
+Function New-PsArkDelegateAccount {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Search for delegates
+
+Search for Delegates by "fuzzy" username.
+
+GET /api/delegates/search?q=username&orderBy=producedblocks:desc
+
+    q: Search criteria. (String)
+    orderBy: Order results by ascending or descending property. Valid sort fields are: username:asc, username:desc, address:asc, address:desc, publicKey:asc, publicKey:desc, vote:asc, vote:desc, missedblocks:asc, missedblocks:desc, producedblocks:asc, producedblocks:desc
+
+Response
+
+{
+  "success": true,
+  "delegates": [
+    "array of delegates"
+  ]
+}
+#>
+
+Function Search-PsArkDelegate {
+
+    # TODO
+}
 
 ##########################################################################################################################################################################################################
 
 <#
 Enable forging on delegate
+
+Enables forging for a delegate on the client node.
 
 POST /api/delegates/forging/enable
 
@@ -947,15 +1392,17 @@ Response
   "address": "address"
 #>
 
-Function Enable-PsArkDelegateForging
-{
+Function Enable-PsArkDelegateForging {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
 Disable forging on delegate
+
+Disables forging for a delegate on the client node.
 
 POST /api/delegates/forging/disable
 
@@ -966,10 +1413,81 @@ Response
   "address": "address"
 #>
 
-Function Disable-PsArkDelegateForging
-{
+Function Disable-PsArkDelegateForging {
 
+    # TODO
 }
+
+
+##########################################################################################################################################################################################################
+### API Call: Signatures
+##########################################################################################################################################################################################################
+
+<#
+Get Signature Fees
+
+Gets the second signature status of an account.
+
+GET /api/signatures/fee
+
+Response
+
+"fee" : Integer
+#>
+
+Function Get-PsArkSignatureFee {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Add second signature
+
+Add a second signature to an account.
+
+PUT /api/signatures
+
+Request
+
+{
+  "secret": "secret key of account",
+  "secondsecret": "second secret key of account",
+  "publicKey": "optional, to verify valid secret key and account"
+}
+
+Response
+
+{
+   "success": true,
+   "transaction": {
+      "type": "Type of transaction. Integer",
+      "amount": "Amount. Integer",
+      "senderPublicKey": "Sender public key. String",
+      "requesterPublicKey": "Requester public key. String",
+      "timestamp": Integer,
+      "asset":{
+         "signature":{
+            "publicKey": "Public key. String"
+         }
+      },
+      "recipientId": "Recipient address. String",
+      "signature": "Signature. String",
+      "id": "Tx ID. String",
+      "fee": "Fee Integer",
+      "senderId": "Sender address. String",
+      "relays": "Propagation. Integer",
+      "receivedAt": "Time. String"
+   }
+}
+#>
+
+Function Add-PsArkSecondSignature {
+
+    # TODO
+}
+
 
 ##########################################################################################################################################################################################################
 ### API Call: Multi-Signature
@@ -977,25 +1495,66 @@ Function Disable-PsArkDelegateForging
 
 <#
 Get pending multi-signature transactions
-Return multisig transaction that waiting for your signature.
+
+Returns a list of multi-signature transactions that waiting for signature by publicKey.
 
 GET /api/multisignatures/pending?publicKey=publicKey
 
 publicKey: Public key of account (String)
 
-Response
-    "transactions": ['array of transactions to sign']
+    Response
+    {
+      "success": true,
+      "transactions": [
+        {
+          "max": "Max. Integer",
+          "min": "Min. Integer",
+          "lifetime": "Lifetime. Integer",
+          "signed": true,
+          "transaction": {
+            "type": "Type of transaction. Integer",
+            "amount": "Amount. Integer",
+            "senderPublicKey": "Sender public key of transaction. Hex",
+            "requesterPublicKey": "Requester public key. String",
+            "timestamp": "Timestamp. Integer",
+            "asset": {
+              "multisignature": {
+                "min": "Min signatures needed for valid tx. Integer",
+                "keysgroup": [
+                  "+Multisig public key member. String"
+                ],
+                "lifetime": "Lifetime. Integer",
+              }
+            },
+            "recipientId": "Recipient address. String",
+            "signature": "Signature. String",
+            "signSignature": "Sign signature. String",
+            "id": "Tx ID",
+            "fee": "Fee. Integer",
+            "senderId": "Sender address. String",
+            "relays": "Propagation. Integer",
+            "receivedAt": Time. String",
+            "signatures": [
+              "array of signatures"
+            ],
+            "ready": false
+          }
+        }
+      ]
+    }
 #>
 
-Function Get-PsArkMultiSigPendingTransactionList
-{
+Function Get-PsArkMultiSigPendingTransactionList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get accounts of multisignature.
+Get multi-signature accounts list.
+
+Gets a list of accounts that belong to a multi-signature account.
 
 GET /api/multisignatures/accounts?publicKey=publicKey
 
@@ -1003,11 +1562,29 @@ publicKey: Public key of multi-signature account (String)
 
 Response
   "accounts": "array of accounts"
+"accounts": [
+    {
+      "address": "Multisig account. String",
+      "balance": "Multisig account balance. String",
+      "multisignatures": [
+        "Multisig public key member. String"
+      ],
+      "multimin": "Min N of sign for a valid tx. Integer",
+      "multilifetime": "Lifetime. Integer",
+      multisigaccounts": [
+        {
+          "address": "Multisig address member. String",
+          "publicKey": "Multisig public key member. String",
+          "balance": "Multisig balance member. String"
+        }
+      ]
+    }
+  ]
 #>
 
-Function Get-PsArkMultiSigAccountList
-{
+Function Get-PsArkMultiSigAccountList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -1018,24 +1595,26 @@ Create multi-signature account
 PUT /api/multisignatures
 
 Request
+{
     "secret": "your secret. string. required.",
-    "lifetime": "request lifetime in hours (1-24). required.",
-    "min": "minimum signatures needed to approve a tx or a change (1-15). integer. required",
-    "keysgroup": [array of public keys strings]. add '+' before publicKey to add an account or '-' to remove. required.
-
+    "secondSecret": "your second secret of the account. optional"
+    "lifetime": "request lifetime in hours (1-72). required.",
+    "min": "minimum signatures needed to approve a tx or a change (1-16). integer. required",
+    "keysgroup": [array of public keys strings]. add '+' before publicKey to add an account. required. immutable.
+}
 Response
   "transactionId": "transaction id"
 #>
 
-Function New-PsArkMultiSigAccount
-{
+Function New-PsArkMultiSigAccount {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Sign transaction that wait for your signature.
+Signs a transaction that is awaiting signature.
 
 POST /api/multisignatures/sign
 
@@ -1046,12 +1625,15 @@ Request
 
 Response
   "transactionId": "transaction id"
+
+  Lisk ONLY ?
 #>
 
-Function Sign-PsArkMultiSigTransaction
-{
+Function Approve-PsArkMultiSigTransaction {
 
+    # TODO
 }
+
 
 ##########################################################################################################################################################################################################
 ### Miscellaneous
@@ -1076,13 +1658,13 @@ Function Invoke-PsPsArkApiCall {
     {
         Write-Verbose "Invoke-PsArkApiCall [$Method] => $URL"
         Try { $Private:WebRequest = Invoke-WebRequest -UseBasicParsing -URI $URL -Method $Method }
-		Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
+        Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
     }
     elseif( ( $Method -eq 'Post' ) -or ( $Method -eq 'Put' ) )
     {
         Write-Verbose "Invoke-PsArkApiCall [$Method] => $URL"
         Try { $Private:WebRequest = Invoke-WebRequest -UseBasicParsing -URI $URL -Method $Method -Body $Body }
-		Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
+        Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
     }
 
     if( ( $WebRequest.StatusCode -eq 200 ) -and ( $WebRequest.StatusDescription -eq 'OK' ) )
@@ -1102,7 +1684,7 @@ Function Show-PsArkAbout {
     #$Private:BannerData64 = ConvertTo-PsArkBase64 -Text $( Get-Content 'D:\GIT\PsArk\PsArk\BannerText.txt' | Out-String )
     #$BannerData64 | Out-File 'D:\GIT\PsArk\PsArk\BannerBase64.txt'
 
-    $Private:BannerData = ConvertFrom-PsArkBase64 -EncodedText 'IAAkACwAIAAgACQALAAgACAAIAAgACAALAAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIABgACIAcwBzAC4AJABzAHMALgAgAC4AcwAnACIAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAuAHMAcwAkACQAJAAkACQAJAAkACQAJAAkAHMALAAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAXwBfAF8AXwBfAF8AXwBfAF8AXwAgACAAIAAgACAAIAAgAFoAIAAgACAALwBcAFoAIAAgACAAIAAgACAAIAAgACAAXwBfACAAIAAgACAAIAAgACAAIAAgAA0ACgAgACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAYAAkACQAUwBzACIAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgAFoAIABcAF8AXwBfAF8AXwBfACAAIAAgAFwAXwBfAF8AXwBfACAAWgAgACAALwAgACAAXABaAF8AXwBfAF8AXwBfAF8AfAAgACAAfAAgAF8AXwAgACAAIAAgAA0ACgAgACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJABvACQAJAAkACAAIAAgACAAIAAgACAALAAiACAAIAAgACAAIAAgACAAIAAgAFoAIAAgAHwAIAAgACAAIAAgAF8AXwBfAC8AIAAgAF8AXwBfAC8AWgAgAC8AIAAgACAAIABcAFoAXwAgACAAXwBfACAAXAAgACAAfAAvACAALwAgACAAIAANAAoAIAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJABzACwAIAAgACwAcwAiACAAIAAgACAAIAAgACAAIABaACAAIAB8ACAAIAAgACAAfAAgACAAIABcAF8AXwBfACAAXAAgAFoALwAgACAALwBcACAAIABcAFoAIAAgAHwAIABcAC8AIAAgACAAIAA8ACAAIAAgAA0ACgAgACQAJAAkACQAJAAiACQAJAAkACQAJAAkACIAIgAiACIAJAAkACQAJAAkACQAIgAkACQAJAAkACQALAAnACAAIAAgACAAIAAgAFoAIAAgAHwAXwBfAF8AXwB8ACAAIAAvAF8AXwBfAF8AIAAgAFoALwAgACAALwBfAF8AXAAgACAAXABaAF8AfAAgACAAfABfAF8AfABfACAAXAAgAA0ACgAgACQAJAAkACQAJAAkAHMAIgAiACQAJAAkACQAcwBzAHMAcwBzAHMAIgAkACQAJAAkACQAJAAkACQAIgAnACAAIAAgACAAIAAgAFoAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAXABaAC8AXwBfAC8AIAAgACAAIABcAF8AXwBcAFoAIAAgACAAIAAgACAAIAAgAFwALwANAAoAIAAkACQAJAAkACQAJwAgACAAIAAgACAAIAAgACAAIABgACIAIgAiAHMAcwAiACQAIgAkAHMAIgAiACcAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQALAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAYAAiACIAIgAiACIAJAAnACAAIAAgACAAIAAgACAAIABaACAAIAA9AD0APQBWAEUAUgBTAEkATwBOAD0APQA9ACAAYgB5ACAARwByADMAMwBuAEQAcgBhAGcAMABuACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQAJAAkAHMALAAuAC4ALgAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAjACMAIwAjAHMALgAnACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAIABEAG8AbgBhAHQAaQBvAG4AIABBAEgAVwBIAFIAQQBXADcAWABSAEUARQBNAFkAQwBUAFgAUgBYADQAWQBSADIAUABBAEkAUQBHAFQARwBSAFgAMgBNACAAWgAgAFoAIAANAAoA'
+    $Private:BannerData = ConvertFrom-PsArkBase64 -EncodedText 'IAAkACwAIAAgACQALAAgACAAIAAgACAALAAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIABgACIAcwBzAC4AJABzAHMALgAgAC4AcwAnACIAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAuAHMAcwAkACQAJAAkACQAJAAkACQAJAAkAHMALAAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAXwBfAF8AXwBfAF8AXwBfAF8AXwAgACAAIAAgACAAIAAgAFoAIAAgACAALwBcAFoAIAAgACAAIAAgACAAIAAgACAAXwBfACAAIAAgACAAIAAgACAAIAAgAA0ACgAgACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAYAAkACQAUwBzACIAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgAFoAIABcAF8AXwBfAF8AXwBfACAAIAAgAFwAXwBfAF8AXwBfACAAWgAgACAALwAgACAAXABaAF8AXwBfAF8AXwBfAF8AfAAgACAAfAAgAF8AXwAgACAAIAAgAA0ACgAgACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJABvACQAJAAkACAAIAAgACAAIAAgACAALAAiACAAIAAgACAAIAAgAFoAIAAgAHwAIAAgACAAIAAgAF8AXwBfAC8AIAAgAF8AXwBfAC8AWgAgAC8AIAAgACAAIABcAFoAXwAgACAAXwBfACAAXAAgACAAfAAvACAALwAgACAAIAANAAoAIAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJABzACwAIAAgACwAcwAiACAAIAAgACAAIABaACAAIAB8ACAAIAAgACAAfAAgACAAIABcAF8AXwBfACAAXAAgAFoALwAgACAALwBcACAAIABcAFoAIAAgAHwAIABcAC8AIAAgACAAIAA8ACAAIAAgAA0ACgAgACQAJAAkACQAJAAiACQAJAAkACQAJAAkACIAIgAiACIAJAAkACQAJAAkACQAIgAkACQAJAAkACQALAAnACAAIAAgAFoAIAAgAHwAXwBfAF8AXwB8ACAAIAAvAF8AXwBfAF8AIAAgAFoALwAgACAALwBfAF8AXAAgACAAXABaAF8AfAAgACAAfABfAF8AfABfACAAXAAgAA0ACgAgACQAJAAkACQAJAAkAHMAIgAiACQAJAAkACQAcwBzAHMAcwBzAHMAIgAkACQAJAAkACQAJAAkACQAIgAnACAAIAAgAFoAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAXABaAC8AXwBfAC8AIAAgACAAIABcAF8AXwBcAFoAIAAgACAAIAAgACAAIAAgAFwALwANAAoAIAAkACQAJAAkACQAJwAgACAAIAAgACAAIAAgACAAIABgACIAIgAiAHMAcwAiACQAIgAkAHMAIgAiACcAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQALAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAYAAiACIAIgAiACIAJAAnACAAIAAgACAAIABaACAAIAA9AD0APQBWAEUAUgBTAEkATwBOAD0APQA9ACAAYgB5ACAARwByADMAMwBuAEQAcgBhAGcAMABuACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQAJAAkAHMALAAuAC4ALgAiACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIAAgACAAIABaACAAWgAgAFoAIAANAAoAIAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAjACMAIwAjAHMALgAnACAAIAAgACAAIAAgACAAIABaACAAIABEAG8AbgBhAHQAaQBvAG4AIABBAEgAVwBIAHIAYQBXADcAeABSAEUAZQBtAFkAQwB0AHgAUgB4ADQAWQBSADIAcABhAGkAcQBHAHQAZwByAFgAMgBNACAAWgAgAFoAIAANAAoA'
     #$BannerData | Out-File 'D:\GIT\PsArk\PsArk\BannerText.txt'
 
     $BannerData = $( $BannerData -Replace '===VERSION===',$Script:PsArk_Version ) -Split "`r`n"
@@ -1114,7 +1696,7 @@ Function Show-PsArkAbout {
         $Private:Parts = $Line -Split 'Z'
         Write-Host $Parts[0] -ForegroundColor Green -NoNewLine
         Write-Host $Parts[1] -ForegroundColor White -NoNewLine
-		Write-Host $Parts[2] -ForegroundColor Cyan -NoNewLine
+        Write-Host $Parts[2] -ForegroundColor Cyan -NoNewLine
         Write-Host $Parts[3] -ForegroundColor White
     }
     Write-Host ''
@@ -1149,12 +1731,88 @@ Function ConvertFrom-PsArkBase64 {
 
 ##########################################################################################################################################################################################################
 
-# Export Public Functions
+
+##### Export Public Functions #####
+
+#### API ############################################################################
+
+# Account #--------------------------------------------------------------------------
 
 Export-ModuleMember -Function Get-PsArkAccount
+#Export-ModuleMember -Function Get-PsArkAccountBalance
+#Export-ModuleMember -Function Get-PsArkAccountPublicKey
+#Export-ModuleMember -Function Get-PsArkAccountVote
+#Export-ModuleMember -Function Get-PsArkAccountSecondSignature
 
-# API - Loader
-Export-ModuleMember -Function Get-PsArkLoadingStatus, Get-PsArkSyncStatus, Get-PsArkBlockReceiptStatus
+#Export-ModuleMember -Function New-PsArkAccount
+#Export-ModuleMember -Function Open-PsArkAccount
+#Export-ModuleMember -Function Add-PsArkAccountVote
+#Export-ModuleMember -Function Remove-PsArkAccountVote
+#Export-ModuleMember -Function Add-PsArkAccountSecondSignature
 
-# Miscellaneous
+# Loader #---------------------------------------------------------------------------
+
+Export-ModuleMember -Function Get-PsArkLoadingStatus
+Export-ModuleMember -Function Get-PsArkSyncStatus
+Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
+
+# Transactions #---------------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkTransaction
+#Export-ModuleMember -Function Get-PsArkTransactionList
+#Export-ModuleMember -Function Get-PsArkTransactionUnconfirmed
+#Export-ModuleMember -Function Get-PsArkTransactionUnconfirmedList
+#Export-ModuleMember -Function Send-PsArkTransaction
+
+# Peers #----------------------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkPeer
+#Export-ModuleMember -Function Get-PsArkPeerList
+#Export-ModuleMember -Function Get-PsArkPeerVersion
+
+# Block / Blockchain #--------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkBlockById
+#Export-ModuleMember -Function Get-PsArkBlockList
+#Export-ModuleMember -Function Get-PsArkBlockchainTransactionFee
+#Export-ModuleMember -Function Get-PsArkBlockchainAllFee
+#Export-ModuleMember -Function Get-PsArkBlockchainReward
+#Export-ModuleMember -Function Get-PsArkBlockchainSupply
+#Export-ModuleMember -Function Get-PsArkBlockchainHeight
+#Export-ModuleMember -Function Get-PsArkBlockchainStatus
+#Export-ModuleMember -Function Get-PsArkBlockchainNethash
+#Export-ModuleMember -Function Get-PsArkBlockchainMilestone
+
+# Delegate #-------------------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkDelegateByPublicKey
+#Export-ModuleMember -Function Get-PsArkDelegateByUsername
+#Export-ModuleMember -Function Get-PsArkDelegateByTransactionId
+#Export-ModuleMember -Function Get-PsArkDelegateList
+#Export-ModuleMember -Function Get-PsArkDelegateVoterList
+#Export-ModuleMember -Function Get-PsArkDelegateCount
+#Export-ModuleMember -Function Get-PsArkDelegateForgedByAccount
+#Export-ModuleMember -Function Get-PsArkDelegateNextForgers
+
+#Export-ModuleMember -Function New-PsArkDelegateAccount
+#Export-ModuleMember -Function Search-PsArkDelegate
+#Export-ModuleMember -Function Enable-PsArkDelegateForging
+#Export-ModuleMember -Function Disable-PsArkDelegateForging
+
+# Signature #------------------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkSignatureFee
+#Export-ModuleMember -Function Add-PsArkSecondSignature
+
+# Multi-Signature #------------------------------------------------------------------
+
+#Export-ModuleMember -Function Get-PsArkMultiSigPendingTransactionList
+#Export-ModuleMember -Function Get-PsArkMultiSigAccountList
+
+#Export-ModuleMember -Function New-PsArkMultiSigAccount
+#Export-ModuleMember -Function Approve-PsArkMultiSigTransaction
+
+
+#### Misc. Functions ################################################################
+
 Export-ModuleMember -Function Show-PsArkAbout

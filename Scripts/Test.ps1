@@ -1,21 +1,21 @@
 <##########################################################################################################################################
 
-Version :	0.1.0.0
-Author  :	Gr33nDrag0n
-History :	2017/04/24 - Release v0.1.0.0
-			2017/04/20 - Creation of the script.
+Version :   0.1.0.0
+Author  :   Gr33nDrag0n
+History :   2017/04/24 - Release v0.1.0.0
+            2017/04/20 - Creation of the script.
 
 ##########################################################################################################################################>
 
 [CmdletBinding()]
 Param(
-	[parameter(Mandatory = $True)]
-	[ValidateSet('ALL','Account','Loader','Transaction','Peer','Block','Delegate','MultiSig')]
-	[System.String] $Test,
-	
-	[parameter(Mandatory = $False)]
-	[System.String] $ConfigFile = '.\Config-Gr33nDrag0n.json'
-	)
+    [parameter(Mandatory = $True)]
+    [ValidateSet('ALL','Account','Loader','Transaction','Peer','Block','Delegate','Signature','MultiSig')]
+    [System.String] $Test,
+
+    [parameter(Mandatory = $False)]
+    [System.String] $ConfigFile = '.\Config-Gr33nDrag0n.json'
+    )
 
 ###########################################################################################################################################
 #### Init.
@@ -29,17 +29,17 @@ Clear-Host
 # Test Path
 if( $( Test-Path $ConfigFile ) -eq $False )
 {
-	Write-Warning 'Config. File NOT FOUND !'
-	Exit
+    Write-Warning 'Config. File NOT FOUND !'
+    Exit
 }
 
 # Load in memory
 Try {
-	$Private:MyConfig = Get-Content $ConfigFile | ConvertFrom-Json
+    $Private:MyConfig = Get-Content $ConfigFile | ConvertFrom-Json
 }
 Catch {
-	Write-Warning 'Config. File ConvertFrom-Json FAILED !'
-	Exit
+    Write-Warning 'Config. File ConvertFrom-Json FAILED !'
+    Exit
 }
 
 
@@ -55,7 +55,7 @@ if( Get-Module -ListAvailable | Where-Object { $_.Name -eq 'PsArk' } )
   Import-Module PsArk
 }
 else
-{   
+{
   Write-Warning 'PsArk Module Not Found'
   Exit
 }
@@ -67,121 +67,140 @@ else
 Show-PsArkAbout
 
 Write-Host ''
-Write-Host '##### LOADED CONFIGURATION ##########################################################' -Foreground Yellow
+Write-Host '##### LOADED CONFIGURATION #####################################################' -Foreground Yellow
 
 $MyConfig.Account
 $MyConfig.Servers
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Account' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: ACCOUNT #############################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: ACCOUNT ########################################################' -Foreground Yellow
+    Write-Host ''
 
-	Write-Host "Command: Get-PsArkAccount -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
-	Get-PsArkAccount -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress | FL *
+    Write-Host "Command: Get-PsArkAccount -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
+    Get-PsArkAccount -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress | FL *
 
-	#Get-PsArkAccountBalance                             
-	#Get-PsArkAccountPublicKey                           
-	#Get-PsArkAccountVote                                
-	#Get-PsArkAccountSecondSignature                     
+    #Get-PsArkAccountBalance
+    #Get-PsArkAccountPublicKey
+    #Get-PsArkAccountVote
+    #Get-PsArkAccountSecondSignature
 
-	#New-PsArkAccount                                    
-	#Open-PsArkAccount                                   
-	#Add-PsArkAccountVote                                
-	#Remove-PsArkAccountVote                             
-	#Add-PsArkAccountSecondSignature                     
+    #New-PsArkAccount
+    #Open-PsArkAccount
+    #Add-PsArkAccountVote
+    #Remove-PsArkAccountVote
+    #Add-PsArkAccountSecondSignature
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Loader' ) )
 {
-		Write-Host ''
-	Write-Host '##### API Call: LOADER ##############################################################' -Foreground Yellow
-	Write-Host ''
+        Write-Host ''
+    Write-Host '##### API Call: LOADER #########################################################' -Foreground Yellow
+    Write-Host ''
 
-	ForEach( $Private:Server in $MyConfig.Servers )
-	{
-		Write-Host "### $Server" -Foreground Yellow
-		Write-Host ''
-		
-		Write-Host "Command: Get-PsArkLoadingStatus -URL $Server" -Foreground Cyan
-		Get-PsArkLoadingStatus -URL $Server | FL *
+    ForEach( $Private:Server in $MyConfig.Servers )
+    {
+        Write-Host "### $Server" -Foreground Yellow
+        Write-Host ''
 
-		Write-Host "Command: Get-PsArkSyncStatus -URL $Server" -Foreground Cyan
-		Get-PsArkSyncStatus -URL $Server | FL *
+        Write-Host "Command: Get-PsArkLoadingStatus -URL $Server" -Foreground Cyan
+        Get-PsArkLoadingStatus -URL $Server | FL *
 
-		Write-Host "Command: Get-PsArkBlockReceiptStatus -URL $Server" -Foreground Cyan
-		Write-Host ''
-		Get-PsArkBlockReceiptStatus -URL $Server | FL *
-		Write-Host ''
-	}
+        Write-Host "Command: Get-PsArkSyncStatus -URL $Server" -Foreground Cyan
+        Get-PsArkSyncStatus -URL $Server | FL *
+
+        Write-Host "Command: Get-PsArkBlockReceiptStatus -URL $Server" -Foreground Cyan
+        Write-Host ''
+        Get-PsArkBlockReceiptStatus -URL $Server | FL *
+        Write-Host ''
+    }
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Transaction' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: TRANSACTION #########################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: TRANSACTION ####################################################' -Foreground Yellow
+    Write-Host ''
 
-	#Get-PsArkTransaction                                
-	#Get-PsArkTransactionList                            
-	#Get-PsArkTransactionUnconfirmed                     
-	#Get-PsArkTransactionUnconfirmedList                 
+    #Get-PsArkTransaction
+    #Get-PsArkTransactionList
+    #Get-PsArkTransactionUnconfirmed
+    #Get-PsArkTransactionUnconfirmedList
 
-	#Send-PsArkTransaction                               
+    #Send-PsArkTransaction
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Peer' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: PEER ################################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: PEER ###########################################################' -Foreground Yellow
+    Write-Host ''
 
-	#Get-PsArkPeer                                       
-	#Get-PsArkPeerList                                   
-	#Get-PsArkPeerListVersion                            
+    #Get-PsArkPeer
+    #Get-PsArkPeerList
+    #Get-PsArkPeerVersion
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Block' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: BLOCK ###############################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: BLOCK / BLOCKCHAIN #############################################' -Foreground Yellow
+    Write-Host ''
 
-	#Get-PsArkBlock                                      
-	#Get-PsArkBlockList                                  
-	#Get-PsArkBlockFee                                   
-	#Get-PsArkBlockHeight                                
-	#Get-PsArkBlockForged                                
+    #Get-PsArkBlockById
+    #Get-PsArkBlockList
+    #Get-PsArkBlockchainTransactionFee
+    #Get-PsArkBlockchainAllFee
+    #Get-PsArkBlockchainReward
+    #Get-PsArkBlockchainSupply
+    #Get-PsArkBlockchainHeight
+    #Get-PsArkBlockchainStatus
+    #Get-PsArkBlockchainNethash
+    #Get-PsArkBlockchainMilestone
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Delegate' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: DELEGATE ############################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: DELEGATE #######################################################' -Foreground Yellow
+    Write-Host ''
 
-	#Get-PsArkDelegate                                   
-	#Get-PsArkDelegateList                               
-	#Get-PsArkDelegateVoterList                          
+    #Get-PsArkDelegateByPublicKey
+    #Get-PsArkDelegateByUsername
+    #Get-PsArkDelegateByTransactionId
+    #Get-PsArkDelegateList
+    #Get-PsArkDelegateVoterList
+    #Get-PsArkDelegateCount
+    #Get-PsArkDelegateForgedByAccount
+    #Get-PsArkDelegateNextForgers
 
-	#Enable-PsArkDelegate                                
-	#Or
-	#New-PsArkDelegate                                   
+    #New-PsArkDelegateAccount
+    #Search-PsArkDelegate
+    #Enable-PsArkDelegateForging
+    #Disable-PsArkDelegateForging
+}
 
-	#Enable-PsArkDelegateForging                         
-	#Disable-PsArkDelegateForging                        
+if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Signature' ) )
+{
+    Write-Host ''
+    Write-Host '##### API Call: SIGNATURE ######################################################' -Foreground Yellow
+    Write-Host ''
+
+    #Get-PsArkSignatureFee
+
+    #Add-PsArkSecondSignature
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'MultiSig' ) )
 {
-	Write-Host ''
-	Write-Host '##### API Call: MULTI-SIGNATURE #####################################################' -Foreground Yellow
-	Write-Host ''
+    Write-Host ''
+    Write-Host '##### API Call: MULTI-SIGNATURE ################################################' -Foreground Yellow
+    Write-Host ''
 
-	#Get-PsArkMultiSigPendingTransactionList             
-	#Get-PsArkMultiSigAccountList                        
+    #Get-PsArkMultiSigPendingTransactionList
+    #Get-PsArkMultiSigAccountList
 
-	#New-PsArkMultiSigAccount                            
-	#Sign-PsArkMultiSigTransaction                       
+    #New-PsArkMultiSigAccount
+    #Approve-PsArkMultiSigTransaction
 }
