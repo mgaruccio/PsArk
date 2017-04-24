@@ -1,3 +1,0 @@
-PsArk TODO
-- Replace uppercase addres in about and remove spacing
-- finish account function
