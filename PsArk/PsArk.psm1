@@ -2,41 +2,41 @@
 
 Version :   0.1.0.0
 Author  :   Gr33nDrag0n
-History :   2017/04/24 - Release v0.1.0.0
+History :   2017/05/13 - Release v0.1.0.0
             2017/04/20 - Creation of the module.
 
 Reference : https://github.com/LiskHQ/lisk-wiki/wiki/Lisk-API-Reference
 
-#### API Call Functions #############################################################
-
 # Account #--------------------------------------------------------------------------
 
-Get-PsArkAccount                                    v0.1.0.0 + Help     Public
-Get-PsArkAccountBalance
-Get-PsArkAccountPublicKey
-Get-PsArkAccountVote                                Struct              Public
-Get-PsArkAccountSecondSignature
+Get-PsArkAccount                                    Code + Help         Public
+Get-PsArkAccountBalance                             Code + Help         Public
+Get-PsArkAccountPublicKey                           Code + Help         Public
+Get-PsArkAccountVoteList                            Code + Help         Public
+Get-PsArkAccountSecondSignature (Deprecated !?)     Struct              Public
 
-New-PsArkAccount
-Open-PsArkAccount
-Add-PsArkAccountVote
-Remove-PsArkAccountVote
-Add-PsArkAccountSecondSignature
+New-PsArkAccount                                    Struct              Public
+Open-PsArkAccount                                   Struct              Public
+Add-PsArkAccountVote                                Struct              Public
+Remove-PsArkAccountVote                             Struct              Public
+Add-PsArkAccountSecondSignature                     Struct              Public
 
 # Loader #---------------------------------------------------------------------------
 
-Get-PsArkLoadingStatus                              v0.1.0.0 + Help     Public
-Get-PsArkSyncStatus                                 v0.1.0.0 + Help     Public
-Get-PsArkBlockReceiptStatus                         v0.1.0.0 + Help     Public
+Get-PsArkLoadingStatus                              Code + Help         Public
+Get-PsArkSyncStatus                                 Code + Help         Public
+Get-PsArkBlockReceiptStatus                         Code + Help         Public
 
 # Transactions #---------------------------------------------------------------------
 
-Get-PsArkTransaction
-Get-PsArkTransactionList
-Get-PsArkTransactionUnconfirmed
-Get-PsArkTransactionUnconfirmedList
+Get-PsArkTransactionById                            Struct              Public
+Get-PsArkTransactionList                            Struct              Public
+Get-PsArkUnconfirmedTransactionById                 Struct              Public
+Get-PsArkUnconfirmedTransactionList                 Struct              Public
+Get-PsArkQueuedTransactionById                      Struct              Public
+Get-PsArkQueuedTransactionList                      Struct              Public
 
-Send-PsArkTransaction
+Send-PsArkTransaction                               Struct              Public
 
 # Peers #----------------------------------------------------------------------------
 
@@ -49,6 +49,7 @@ Get-PsArkPeerVersion                                Struct              Public
 Get-PsArkBlockById                                  Struct              Public
 Get-PsArkBlockList                                  Struct              Public
 Get-PsArkBlockchainTransactionFee                   Struct              Public
+Get-PsArkBlockchainSignatureFee                     Struct              Public
 Get-PsArkBlockchainAllFee                           Struct              Public
 Get-PsArkBlockchainReward                           Struct              Public
 Get-PsArkBlockchainSupply                           Struct              Public
@@ -66,18 +67,13 @@ Get-PsArkDelegateList                               Struct              Public
 Get-PsArkDelegateVoterList                          Struct              Public
 Get-PsArkDelegateCount                              Struct              Public
 Get-PsArkDelegateForgedByAccount                    Struct              Public
+Get-PsArkDelegateForgingStatus                      Struct              Public
 Get-PsArkDelegateNextForgers                        Struct              Public
 
 New-PsArkDelegateAccount                            Struct              Public
 Search-PsArkDelegate                                Struct              Public
 Enable-PsArkDelegateForging                         Struct              Public
 Disable-PsArkDelegateForging                        Struct              Public
-
-# Signature #------------------------------------------------------------------------
-
-Get-PsArkSignatureFee                               Struct              Public
-
-Add-PsArkSecondSignature                            Struct              Public
 
 # Multi-Signature #------------------------------------------------------------------
 
@@ -89,10 +85,10 @@ Approve-PsArkMultiSigTransaction                    Struct              Public
 
 #### Misc. Functions ################################################################
 
-Invoke-PsPsArkApiCall                               v0.l.0.0            Private
-Show-PsArkAbout                                     v0.l.0.0            Public
-ConvertTo-PsArkBase64                               v0.l.0.0            Private
-ConvertFrom-PsArkBase64                             v0.l.0.0            Private
+Invoke-PsArkApiCall                                 Code                Private
+Show-PsArkAbout                                     Code                Public
+ConvertTo-PsArkBase64                               Code                Private
+ConvertFrom-PsArkBase64                             Code                Private
 Export-PsArkCsv
 Export-PsArkXml
 Export-PsArkJson
@@ -108,23 +104,36 @@ $Script:PsArk_Version = 'v0.1.0.0'
 
 <#
 .SYNOPSIS
-    API Call: Get informations about an account from address.
+    Get informations about an account from address.
 
 .DESCRIPTION
     Return a custom object with following properties:
 
-    Address                    : Address of account. [String]
-    PublicKey                  : Public key of account. [String]
-    SecondPublicKey            : Second signature public key. [String]
+		Address                    : Address of account. [String]
+		
+		PublicKey                  : Public key of account. [String]
+		
+		SecondPublicKey            : Second signature public key. [String]
 
-    Balance                    : Balance of account. [Int]
-    UnconfirmedBalance         : Unconfirmed balance of account. [Int]
+		Balance                    : Balance of account in 'satoshi'. [String]
+                                 1.1 Ark = 110000000 Value
 
-    SecondSignature            : If second signature is enabled. [Bool]
-    UnconfirmedSecondSignature : If second signature is enabled. (But it's still not confirmed.) [Bool]
+		BalanceFloat               : Balance of account in 'float'. [Double]
+                                 1.1 Ark = 1.1 Value
 
-    MultiSignatures            : (No infos available.) [Array]
-    UnconfirmedMultiSignatures : (No infos available.) [Array]
+		UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
+                                 1.1 Ark = 110000000 Value
+
+		UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
+                                 1.1 Ark = 1.1 Value
+
+		SecondSignature            : If second signature is enabled. [Boolean]
+		
+		UnconfirmedSecondSignature : If second signature is enabled. (But it's still not confirmed.) [Boolean]
+
+		MultiSignatures            : (No infos available.) [Array]
+		
+		UnconfirmedMultiSignatures : (No infos available.) [Array]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -133,7 +142,7 @@ $Script:PsArk_Version = 'v0.1.0.0'
     Address of account.
 
 .EXAMPLE
-    Get-PsArkAccount -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+    $Account = Get-PsArkAccount -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 #>
 
 Function Get-PsArkAccount {
@@ -146,16 +155,18 @@ Function Get-PsArkAccount {
         [System.String] $Address
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts?address='+$Address )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts?address='+$Address )
     if( $Output.success -eq $True )
     {
         $Output.account | Select-Object -Property  @{Label="Address";Expression={$_.address}}, `
                                                    @{Label="PublicKey";Expression={$_.publicKey}}, `
                                                    @{Label="SecondPublicKey";Expression={$_.secondPublicKey}}, `
                                                    @{Label="Balance";Expression={$_.balance}}, `
+                                                   @{Label="BalanceFloat";Expression={$_.balance/100000000}}, `
                                                    @{Label="UnconfirmedBalance";Expression={$_.unconfirmedBalance}}, `
-                                                   @{Label="SecondSignature";Expression={$_.secondSignature}}, `
-                                                   @{Label="UnconfirmedSecondSignature";Expression={$_.unconfirmedSignature}}, `
+                                                   @{Label="UnconfirmedBalanceFloat";Expression={$_.unconfirmedBalance/100000000}}, `
+                                                   @{Label="SecondSignature";Expression={[bool] $_.secondSignature}}, `
+                                                   @{Label="UnconfirmedSecondSignature";Expression={[bool] $_.unconfirmedSignature}}, `
                                                    @{Label="MultiSignatures";Expression={$_.multisignatures}}, `
                                                    @{Label="UnconfirmedMultiSignatures";Expression={$_.u_multisignatures}}
     }
@@ -165,45 +176,54 @@ Function Get-PsArkAccount {
 
 <#
 .SYNOPSIS
-    API Call: Get the balance of an account.
+    Get the balance of an account.
 
 .DESCRIPTION
-    Return an object with following properties:
+    Return a custom object with following properties:
 
-    "Balance":     "Balance of account",
-    "Balance_U":   "Unconfirmed balance of account"
-    "Balance_C":   "Balance of account / 100000000",
-    "Balance_UC":  "Unconfirmed balance of account / 100000000"
+		Address                    : Address of account. [String]
+
+		Balance                    : Balance of account in 'satoshi'. [String]
+                                 1.1 Ark = 110000000 Value
+
+		BalanceFloat               : Balance of account in 'float'. [Double]
+                                 1.1 Ark = 1.1 Value
+
+		UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
+                                 1.1 Ark = 110000000 Value
+
+		UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
+                                 1.1 Ark = 1.1 Value
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    Get-PsArkAccountBalance -Address AHWHRAW7XREEMYCTXRX4YR2PAIQGTGRX2M
+    $AccountBalance = Get-PsArkAccountBalance -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+
 #>
 
-Function Get-PsArkAccountBalance
-{
-    [CmdletBinding()]
+Function Get-PsArkAccountBalance {
+
     Param(
-        [parameter(Mandatory = $False)]
-        [System.String] $URL='',
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
 
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
 
-    if( $URL -eq '' ) { $URL = $Script:PsArk_URL }
-
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts/getBalance/?address='+$Address )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts/getBalance/?address='+$Address )
     if( $Output.success -eq $True )
     {
-        New-Object PSObject -Property @{
-          'Balance_UC'  = $($Output.UnconfirmedBalance/100000000)
-          'Balance_C'   = $($Output.Balance/100000000)
-          'Balance_U'   = $Output.UnconfirmedBalance
-          'Balance'     = $Output.Balance
-        }
+        $Output | Select-Object -Property  @{Label="Address";Expression={$Address}}, `
+                                           @{Label="Balance";Expression={$_.balance}}, `
+                                           @{Label="BalanceFloat";Expression={$_.balance/100000000}}, `
+                                           @{Label="UnconfirmedBalance";Expression={$_.unconfirmedBalance}}, `
+                                           @{Label="UnconfirmedBalanceFloat";Expression={$_.unconfirmedBalance/100000000}}
     }
 }
 
@@ -211,86 +231,107 @@ Function Get-PsArkAccountBalance
 
 <#
 .SYNOPSIS
-    API Call: Get account public key.
+    Get the public key of an account.
 
 .DESCRIPTION
-    Get the public key of an account.
+    Return Public Key of account. [String]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    Get-PsArkAccountPublicKey -Address AHWHRAW7XREEMYCTXRX4YR2PAIQGTGRX2M
+    $AccountPublicKey = Get-PsArkAccountPublicKey -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+
 #>
 
-Function Get-PsArkAccountPublicKey
-{
-    [CmdletBinding()]
+Function Get-PsArkAccountPublicKey {
+
     Param(
-        [parameter(Mandatory = $False)]
-        [System.String] $URL='',
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
 
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
 
-    if( $URL -eq '' ) { $URL = $Script:PsArk_URL }
-
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts/getPublicKey?address='+$Address )
-    if( $Output.success -eq $True ) { $Output.publicKey }
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts/getPublicKey?address='+$Address )
+    if( $Output.success -eq $True )
+    {
+        $Output | Select-Object -ExpandProperty publicKey
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
 .SYNOPSIS
-    API Call: Get votes by account address.
+    Get the list of vote(s) of an account.
 
 .DESCRIPTION
-    Get votes statistics from other addresses to the account address.
+    Return a list of currently voted delegate(s) from account. [Array]
+
+    The list (array) contain custom 'Delegate' object with following properties:
+
+		Name                       : Delegate name of the account. [String]
+		
+		Address                    : Address of account. [String]
+		
+		PublicKey                  : Public Key of account. [String]
+		
+		Vote                       : Total number of vote of the account in 'satoshi'. [String]
+                                 1.1 Ark = 110000000 Value
+									 
+		VoteFloat                  : Total number of vote of the account in 'float'. [Double]
+                                 1.1 Ark = 1.1 Value
+									 
+		ProducedBlocks             : Number of forged block(s) by the account. [Int32]
+		
+		MissedBlocks               : Number of missed block(s) by the account. [Int32]
+		
+		Rate                       : Delegate rank [Int32]
+		
+		Approval                   : Delegate vote approval [Decimal]
+		
+		Productivity               : Delegate productivity [Decimal]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    Get-PsArkAccountVote -Address AHWHRAW7XREEMYCTXRX4YR2PAIQGTGRX2M
+    $AccountVoteList = Get-PsArkAccountVoteList -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+
 #>
 
-<#
+Function Get-PsArkAccountVoteList {
 
-Get votes of account
-
-Get votes by account wallet address.
-
-GET /api/accounts/delegates/?address=address
-
-    address: Address of account. (String)
-
-Response
-
-{
-  "success": true,
-  "delegates": [
-      "array of of delegates object (see above delegate object response)"
-    ]
-}
-
-    Delegates Array includes: delegateId, address, publicKey, vote (# of votes), producedBlocks, missedBlocks, rate, productivity
-#>
-
-Function Get-PsArkAccountVote
-{
-    [CmdletBinding()]
     Param(
-        [parameter(Mandatory = $False)]
-        [System.String] $URL='',
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
 
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/accounts/delegates?address='+$Address )
-    if( $Output.success -eq $True ) { $Output.delegates }
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts/delegates?address='+$Address )
+    if( $Output.success -eq $True )
+    {
+        $Output | Select-Object -ExpandProperty delegates | Select-Object -Property @{Label="Name";Expression={$_.username}}, `
+                                                                                    @{Label="Address";Expression={$_.address}}, `
+                                                                                    @{Label="PublicKey";Expression={$_.publicKey}}, `
+                                                                                    @{Label="Vote";Expression={$_.vote}}, `
+                                                                                    @{Label="VoteFloat";Expression={$_.vote/100000000}}, `
+                                                                                    @{Label="ProducedBlocks";Expression={$_.producedblocks}}, `
+                                                                                    @{Label="MissedBlocks";Expression={$_.missedblocks}}, `
+                                                                                    @{Label="Rate";Expression={$_.rate}}, `
+                                                                                    @{Label="Approval";Expression={$_.approval}}, `
+                                                                                    @{Label="Productivity";Expression={$_.productivity}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -313,9 +354,15 @@ Response
     }
 #>
 
-Function Get-PsArkAccountSecondSignature
-{
+<#
+NO MORE IN OFFICIAL DOCUMENTATION
 
+DEPRECATED !?
+#>
+
+Function Get-PsArkAccountSecondSignature {
+
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -338,14 +385,38 @@ Function Get-PsArkAccountSecondSignature
     New-PsArkAccount -Secret 'soon control wild distance sponsor decrease cheap example avoid route ten pudding'
 #>
 
-Function New-PsArkAccount
+<#
+
+Generate public key
+
+Returns the public key of the provided secret key.
+
+POST /api/accounts/generatePublicKey
+
+Request
+
 {
+  "secret": "secret key of account"
+}
+
+Response
+
+{
+  "success": true,
+  "publicKey": "Public key of account. Hex"
+}
+
+#>
+
+Function New-PsArkAccount {
+
+<#
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)] [string] $Secret
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Post -URL $( $Script:PsArk_URL+'accounts/generatePublicKey' ) -Body @{secret=$Secret}
+    $Private:Output = Invoke-PsArkApiCall -Method Post -URL $( $Script:PsArk_URL+'accounts/generatePublicKey' ) -Body @{secret=$Secret}
     if( $Output.success -eq $True )
     {
         New-Object PSObject -Property @{
@@ -353,6 +424,7 @@ Function New-PsArkAccount
             'Address'    = 'NOT CODED YET!'
             }
     }
+#>
 }
 
 ##########################################################################################################################################################################################################
@@ -381,6 +453,38 @@ Function New-PsArkAccount
     Open-PsArkAccount -Secret 'soon control wild distance sponsor decrease cheap example avoid route ten pudding'
 #>
 
+<#
+Open account
+
+Request information about an account.
+
+POST /api/accounts/open
+
+Request
+
+{
+  "secret": "secret key of account"
+}
+
+Response
+
+{
+  "success": true,
+  "account": {
+    "address": "Address of account. String",
+    "unconfirmedBalance": "Unconfirmed balance of account. String",
+    "balance": "Balance of account. String",
+    "publicKey": "Public key of account. Hex",
+    "unconfirmedSignature": "If account enabled second signature, but it's still not confirmed. Integer",
+    "secondSignature": "If account enabled second signature. Integer",
+    "secondPublicKey": "Second public key of account. Hex",
+    "multisignatures": "Multisignatures. Array"
+    "u_multisignatures": "uMultisignatures. Array"
+  }
+}
+
+#>
+
 Function Open-PsArkAccount
 {
     [CmdletBinding()]
@@ -388,76 +492,141 @@ Function Open-PsArkAccount
         [parameter(Mandatory = $True)] [string] $Secret
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Post -URL $( $Script:PsArk_URL+'accounts/open' ) -Body @{secret=$Secret}
+    $Private:Output = Invoke-PsArkApiCall -Method Post -URL $( $Script:PsArk_URL+'accounts/open' ) -Body @{secret=$Secret}
     if( $Output.success -eq $True ) { $Output.account }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
+Put delegates
+
 Vote for the selected delegates. Maximum of 33 delegates at once.
+
 PUT /api/accounts/delegates
 
 Request
+
+{
     "secret" : "Secret key of account",
     "publicKey" : "Public key of sender account, to verify secret passphrase in wallet. Optional, only for UI",
     "secondSecret" : "Secret key from second transaction, required if user uses second signature",
     "delegates" : "Array of string in the following format: ["+DelegatePublicKey"] OR ["-DelegatePublicKey"]. Use + to UPvote, - to DOWNvote"
+}
 
 Response
-    "success": true,
-    "transaction": {object}
+
+{
+   "success": true,
+   "transaction": {
+      "type": "Type of transaction. Integer",
+      "amount": "Amount. Integer",
+      "senderPublicKey": "Sender public key. String",
+      "requesterPublicKey": "Requester public key. String",
+      "timestamp": "Time. Integer",
+      "asset":{
+         "votes":[
+            "+VotedPublickKey",
+            "-RemovedVotePublicKey"
+         ]
+      },
+      "recipientId": "Recipient address. String",
+      "signature": "Signature. String",
+      "signSignature": "Sign signature. String",
+      "id": "Tx ID. String",
+      "fee": "Fee. Integer",
+      "senderId": "Sender address. String",
+      "relays": "Propagation. Integer",
+      "receivedAt": "Time. String"
+   }
+}
+
+Example - No Second Secret
+
+curl -k -H "Content-Type: application/json" \
+-X PUT -d '{"secret":"<INSERT SECRET HERE>","publicKey"="<INSERT PUBLICKEY HERE>","delegates":["<INSERT DELEGATE PUBLICKEY HERE>"]}' \
+http://localhost:8000/api/accounts/delegates
+
+Example - With Second Secret
+
+curl -k -H "Content-Type: application/json" \
+-X PUT -d '{"secret":"<INSERT SECRET HERE>","publicKey"="<INSERT PUBLICKEY HERE>",secondSecret"="<INSERT SECONDSECRET HERE>,"delegates":["<INSERT DELEGATE PUBLICKEY HERE>"]}' \
+http://localhost:8000/api/accounts/delegates
+
+Example - Multiple Votes
+
+curl -k -H "Content-Type: application/json" \
+-X PUT -d '{"secret":"<INSERT SECRET HERE>","publicKey"="<INSERT PUBLICKEY HERE>","delegates":["<INSERT DELEGATE PUBLICKEY HERE>","<INSERT DELEGATE PUBLICKEY HERE>"]}' \
+http://localhost:8000/api/accounts/delegates
 #>
 
-Function Add-PsArkAccountVote
-{
+Function Add-PsArkAccountVote {
+
+    # TODO
     # Add support for PublickKey, Address, Delegate Name
-    # Validate NbEntry >=1 && <= 33
+    # Validate NbEntry >=1 && <= 33 ???
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Vote for the selected delegates. Maximum of 33 delegates at once.
-PUT /api/accounts/delegates
-
-Request
-    "secret" : "Secret key of account",
-    "publicKey" : "Public key of sender account, to verify secret passphrase in wallet. Optional, only for UI",
-    "secondSecret" : "Secret key from second transaction, required if user uses second signature",
-    "delegates" : "Array of string in the following format: ["+DelegatePublicKey"] OR ["-DelegatePublicKey"]. Use + to UPvote, - to DOWNvote"
-
-Response
-    "success": true,
-    "transaction": {object}
+Make Add Help and copy-paste/modify
 #>
 
-Function Remove-PsArkAccountVote
-{
-    # Add support for PublickKey, Address, Delegate Name
+Function Remove-PsArkAccountVote {
+
+    # TODO - Code Add-PsArkAccountVote and copy-paste/modify
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Add second signature to account.
+Add second signature
+
+Add a second signature to an account.
 
 PUT /api/signatures
 
 Request
+
+{
   "secret": "secret key of account",
-  "secondsecret": "second key of account",
+  "secondsecret": "second secret key of account",
   "publicKey": "optional, to verify valid secret key and account"
+}
 
 Response
-  "transactionId": "id of transaction with new signature",
-  "publicKey": "Public key of signature. hex"
+
+{
+   "success": true,
+   "transaction": {
+      "type": "Type of transaction. Integer",
+      "amount": "Amount. Integer",
+      "senderPublicKey": "Sender public key. String",
+      "requesterPublicKey": "Requester public key. String",
+      "timestamp": Integer,
+      "asset":{
+         "signature":{
+            "publicKey": "Public key. String"
+         }
+      },
+      "recipientId": "Recipient address. String",
+      "signature": "Signature. String",
+      "id": "Tx ID. String",
+      "fee": "Fee Integer",
+      "senderId": "Sender address. String",
+      "relays": "Propagation. Integer",
+      "receivedAt": "Time. String"
+   }
+}
 #>
 
-Function Add-PsArkAccountSecondSignature
-{
+Function Add-PsArkAccountSecondSignature {
 
+    # TODO
 }
+
+
 
 ##########################################################################################################################################################################################################
 ### API Call: Loader - Provides the synchronization and loading information of a client. These API calls will only work if the client is syncing or loading.
@@ -489,7 +658,7 @@ Function Get-PsArkLoadingStatus
         [System.String] $URL
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/loader/status' )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/loader/status' )
     if( $Output.Success -eq $True )
     {
         $Output | Select-Object -Property  @{Label="Loaded";Expression={$_.loaded}}, `
@@ -499,6 +668,16 @@ Function Get-PsArkLoadingStatus
 }
 
 ##########################################################################################################################################################################################################
+
+<#
+Lisk is different.
+
+   "syncing": "Is wallet is syncing with another peers? Boolean: true or false",
+   "blocks": "Number of blocks remaining to sync. Integer",
+   "height": "Total blocks in blockchain. Integer",
+   "broadhash": "Block propagation efficiency and reliability. String",
+   "consensus": "Efficiency (%). Integer"
+#>
 
 <#
 .SYNOPSIS
@@ -527,7 +706,7 @@ Function Get-PsArkSyncStatus
         [System.String] $URL
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/loader/status/sync' )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/loader/status/sync' )
     if( $Output.Success -eq $True )
     {
         $Output | Select-Object -Property  @{Label="Syncing";Expression={$_.syncing}}, `
@@ -553,15 +732,15 @@ Function Get-PsArkSyncStatus
     Get-PsArkBlockReceiptStatus -URL https://api.arknode.net/
 #>
 
-Function Get-PsArkBlockReceiptStatus
-{
+Function Get-PsArkBlockReceiptStatus {
+
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)]
         [System.String] $URL
         )
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $URL+'api/loader/status/ping' )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/loader/status/ping' )
     if( $Output.Success -ne $NULL ) { $Output.Success }
 }
 
@@ -570,33 +749,40 @@ Function Get-PsArkBlockReceiptStatus
 ##########################################################################################################################################################################################################
 
 <#
-Get transaction matched by id.
+Get transaction
+
+Get transaction that matches the provided id.
 
 GET /api/transactions/get?id=id
 
-id: String of transaction (String)
+    id: String of transaction (String)
 
 Response
-    "transaction": {
-        "id": "Id of transaction. String",
-        "type": "Type of transaction. Integer",
-        "subtype": "Subtype of transaction. Integer",
-        "timestamp": "Timestamp of transaction. Integer",
-        "senderPublicKey": "Sender public key of transaction. Hex",
-        "senderId": "Address of transaction sender. String",
-        "recipientId": "Recipient id of transaction. String",
-        "amount": "Amount. Integer",
-        "fee": "Fee. Integer",
-        "signature": "Signature. Hex",
-        "signSignature": "Second signature. Hex",
-        "companyGeneratorPublicKey": "If transaction was sent to merchant, provided comapny generator public key to find company. Hex",
-        "confirmations": "Number of confirmations. Integer"
-    }
+
+{
+  "success": true,
+  "transaction": {
+    "id": "Id of transaction. String",
+    "height": "Tx blockchain height. Integer",
+    "blockId" "Tx blockId. String",
+    "type": "Type of transaction. Integer",
+    "timestamp": "Timestamp of transaction. Integer",
+    "senderPublicKey": "Sender public key of transaction. Hex",
+    "senderId": "Address of transaction sender. String",
+    "recipientId": "Recipient id of transaction. String",
+    "amount": "Amount. Integer",
+    "fee": "Fee. Integer",
+    "signature": "Signature. Hex",
+    "signatures": "Signatures. Array",
+    "confirmations": "Number of confirmations. Integer",
+    "asset": "Resources. Object"
+  }
+}
 #>
 
-Function Get-PsArkTransaction
-{
+Function Get-PsArkTransactionById {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -604,7 +790,7 @@ Function Get-PsArkTransaction
 <#
 Get list of transactions
 
-Transactions list matched by provided parameters.
+List of transactions matched by provided parameters.
 
 GET /api/transactions?blockId=blockId&senderId=senderId&recipientId=recipientId&limit=limit&offset=offset&orderBy=field
 
@@ -613,51 +799,75 @@ GET /api/transactions?blockId=blockId&senderId=senderId&recipientId=recipientId&
     recipientId: Recipient of transaction. (String)
     limit: Limit of transaction to send in response. Default is 20. (Number)
     offset: Offset to load. (Integer number)
-    orderBy: Name of column to order. After column name must go "desc" or "acs" to choose order type, prefix for column name is t_. Example: orderBy=t_timestamp:desc (String)
+    orderBy: Name of column to order. After column name must go "desc" or "asc" to choose order type, prefix for column name is t_. Example: orderBy=t_timestamp:desc (String)
 
-All parameters joins by "OR".
+All parameters join by "OR" by default, to join with "AND" specify AND: in front of the parameter.
 
 Example:
-/api/transactions?blockId=10910396031294105665&senderId=6881298120989278452C&orderBy=timestamp:desc looks like: blockId=10910396031294105665 OR senderId=6881298120989278452C
+/api/transactions?blockId=10910396031294105665&senderId=6881298120989278452L&orderBy=timestamp:desc looks like: blockId=10910396031294105665 OR senderId=6881298120989278452L
 
 Response
-    "transactions": [
-        "list of transactions objects"
+
+{
+  "success": true,
+  "transactions": [
+    "list of transactions objects"
+  ]
+}
+
+Example - blockId
+
+curl -k -X GET http://localhost:8000/api/transactions?blockId=<blockId>
+
+Example - senderId
+
+curl -k -X GET http://localhost:8000/api/transactions?senderId=<senderId>
+
+Example - recipientId
+
+curl -k -X GET http://localhost:8000/api/transactions?recipientId=<recipientId>
 #>
 
-Function Get-PsArkTransactionList
-{
+Function Get-PsArkTransactionList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get unconfirmed transaction by id.
+Get unconfirmed transaction
+
+Get unconfirmed transaction that matches the provided id.
 
 GET /api/transactions/unconfirmed/get?id=id
 
-id: String of transaction (String)
+    id: String of transaction (String)
 
 Response
-    "transaction": {
-        "id": "Id of transaction. String",
-        "type": "Type of transaction. Integer",
-        "subtype": "Subtype of transaction. Integer",
-        "timestamp": "Timestamp of transaction. Integer",
-        "senderPublicKey": "Sender public key of transaction. Hex",
-        "senderId": "Address of transaction sender. String",
-        "recipientId": "Recipient id of transaction. String",
-        "amount": "Amount. Integer",
-        "fee": "Fee. Integer",
-        "signature": "Signature. Hex",
-        "signSignature": "Second signature. Hex",
-        "confirmations": "Number of confirmations. Integer"
+
+{
+  "success": true,
+  "transaction": {
+    "type": "Type of transaction. Integer",
+    "amount": "Amount. Integer",
+    "senderPublicKey": "Sender public key of transaction. Hex",
+    "timestamp": "Timestamp of transaction. Integer",
+    "asset": "Resources. Object"
+    "recipientId": "Recipient id of transaction. String",
+    "signature": "Signature. Hex",
+    "id": "Id of transaction. String",
+    "fee": "Fee. Integer",
+    "senderId": "Address of transaction sender. String",
+    "relays": "Propagation. Integer",
+    "receivedAt": "Timestamp. String"
+  }
+}
 #>
 
-Function Get-PsArkTransactionUnconfirmed
-{
+Function Get-PsArkUnconfirmedTransactionById {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -665,39 +875,165 @@ Function Get-PsArkTransactionUnconfirmed
 <#
 Get list of unconfirmed transactions
 
+Gets a list of unconfirmed transactions.
+
 GET /api/transactions/unconfirmed
 
 Response
+
+{
+    "success" : true,
     "transactions" : [list of transaction objects]
+}
 #>
 
-Function Get-PsArkTransactionUnconfirmedList
-{
+Function Get-PsArkUnconfirmedTransactionList {
 
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
 
 <#
+Get specific queued transaction
+
+Get queued transaction that matches the provided id.
+
+GET /api/transactions/queued/get?id=id
+
+    id: String of transaction (String)
+
+Response
+
+{
+  "success": true,
+  "transaction": {
+    "id": "Id of transaction. String",
+    "type": "Type of transaction. Integer",
+    "subtype": "Subtype of transaction. Integer",
+    "timestamp": "Timestamp of transaction. Integer",
+    "senderPublicKey": "Sender public key of transaction. Hex",
+    "senderId": "Address of transaction sender. String",
+    "recipientId": "Recipient id of transaction. String",
+    "amount": "Amount. Integer",
+    "fee": "Fee. Integer",
+    "signature": "Signature. Hex",
+    "signSignature": "Second signature. Hex",
+    "confirmations": "Number of confirmations. Integer"
+  }
+}
+#>
+
+Function Get-PsArkQueuedTransactionById {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get list of queued transactions
+
+Gets a list of queued transactions.
+
+GET /api/transactions/queued
+
+Response
+
+{
+    "success" : true,
+    "transactions" : [list of transaction objects]
+}
+#>
+
+Function Get-PsArkQueuedTransactionList {
+
+    # TODO
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Send transaction
+
 Send transaction to broadcast network.
 
 PUT /api/transactions
 
 Request
+
+{
     "secret" : "Secret key of account",
     "amount" : /* Amount of transaction * 10^8. Example: to send 1.1234 LISK, use 112340000 as amount */,
     "recipientId" : "Recipient of transaction. Address or username.",
     "publicKey" : "Public key of sender account, to verify secret passphrase in wallet. Optional, only for UI",
     "secondSecret" : "Secret key from second transaction, required if user uses second signature"
+}
 
 Response
-    "transactionId": "id of added transaction"
+
+{
+  "success": true,
+  "transactionId": "id of added transaction"
+}
+
+Example
+
+curl -k -H "Content-Type: application/json" \
+-X PUT -d '{"secret":"<INSERT SECRET HERE>","amount":<INSERT AMOUNT HERE>,"recipientId":"<INSERT WALLET ADDRESS HERE>"}' \
+http://localhost:8000/api/transactions
+
+Example - Second Secret
+
+curl -k -H "Content-Type: application/json" \
+-X PUT -d '{"secret":"<INSERT SECRET HERE>","secondSecret":"<INSERT SECOND SECRET HERE>",
+"amount":<INSERT AMOUNT HERE>,"recipientId":"<INSERT WALLET ADDRESS HERE>"}' \
+http://localhost:8000/api/transactions
 #>
 
-Function Send-PsArkTransaction
-{
+Function Send-PsArkTransaction {
+
+  [CmdletBinding()]
+  Param(
+      [parameter(Mandatory = $True)]
+      [System.String] $URI,
+
+      [parameter(Mandatory = $True)]
+      [System.String] $Secret,
+
+      [parameter(Mandatory = $True)]
+      [System.String] $Amount,
+
+      [parameter(Mandatory = $True)]
+      [System.String] $Recipient,
+
+      [parameter(Mandatory = $False)]
+      [System.String] $SecondSecret=''
+      )
+
+  if( $SecondSecret -ne '' )
+  {
+    $Private:Body = @{
+            secret=$Secret
+            amount=[int]$Amount
+            recipientId=$Recipient
+            secondSecret=$SecondSecret
+            }
+  }
+  else
+  {
+    $Private:Body = @{
+            secret=$Secret
+            amount=[int]$Amount
+            recipientId=$Recipient
+            }
+  }
+
+  $Private:Output = Invoke-RestMethod $( $URI+'api/transactions' ) -Method Put -Body $( $Body | ConvertTo-Json ) -ContentType 'application/json'
+  if( $Output.success -eq $True ) { $Output.transactionId }
 
 }
+
 
 ##########################################################################################################################################################################################################
 ### API Call: Peers
@@ -731,7 +1067,7 @@ Response
 
 Function Get-PsArkPeer {
 
-    $Private:Output = Invoke-PsPsArkApiCall -Method Get -URL $( $Script:PsArk_URL+'peers' )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $Script:PsArk_URL+'peers' )
     if( $Output.success -eq $True ) { $Output.peers }
 }
 
@@ -893,6 +1229,106 @@ Response
 #>
 
 Function Get-PsArkBlockchainTransactionFee {
+
+
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
+
+        [parameter(Mandatory = $False)]
+    [System.String] $TotalFee='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $TotalAmount='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $PreviousBlock='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $Height='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $GeneratorPublicKey='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $Limit='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $Offset='',
+
+        [parameter(Mandatory = $False)]
+    [System.String] $OrderBy=''
+        )
+
+  if( ( $TotalFee -eq '' ) -and ( $TotalAmount -eq '' ) -and ( $PreviousBlock -eq '' ) -and ( $Height -eq '' ) -and ( $GeneratorPublicKey -eq '' ) -and ( $Limit -eq '' ) -and ( $Offset -eq '' ) -and ( $OrderBy -eq '' ) )
+  {
+    Write-Warning 'Get-LiskBlockList | The usage of at least one parameter is mandatory. Nothing to do.'
+  }
+  else
+  {
+    $Private:Query = '?'
+
+    if( $TotalFee -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "totalFee=$TotalFee"
+    }
+    if( $TotalAmount -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "totalAmount=$TotalAmount"
+    }
+    if( $PreviousBlock -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "previousBlock=$PreviousBlock"
+    }
+    if( $Height -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "height=$Height"
+    }
+    if( $GeneratorPublicKey -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "generatorPublicKey=$GeneratorPublicKey"
+    }
+    if( $Limit -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "limit=$Limit"
+    }
+    if( $Offset -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "offset=$Offset"
+    }
+    if( $OrderBy -ne '' )
+    {
+      if( $Query -ne '?' ) { $Query += '&' }
+      $Query += "orderBy=$OrderBy"
+    }
+
+    $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/blocks'+$Query )
+    if( $Output.success -eq $True ) { $Output.blocks }
+  }
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get Signature Fees
+
+Gets the second signature status of an account.
+
+GET /api/signatures/fee
+
+Response
+
+"fee" : Integer
+#>
+
+Function Get-PsArkBlockchainSignatureFee {
 
     # TODO
 }
@@ -1097,7 +1533,18 @@ Response
 
 Function Get-PsArkDelegateByPublicKey {
 
-    # TODO
+  [CmdletBinding()]
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
+
+    [parameter(Mandatory = $True)]
+    [System.String] $PublicKey
+        )
+
+  $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/delegates/get?publicKey='+$PublicKey )
+  if( $Output.success -eq $True ) { $Output.delegate }
+
 }
 
 ##########################################################################################################################################################################################################
@@ -1210,7 +1657,18 @@ Response
 
 Function Get-PsArkDelegateVoterList {
 
-    # TODO
+    [CmdletBinding()]
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
+
+    [parameter(Mandatory = $True)]
+    [System.String] $PublicKey
+        )
+
+  $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/delegates/voters?publicKey='+$PublicKey )
+  if( $Output.success -eq $True ) { $Output.accounts }
+
 }
 
 ##########################################################################################################################################################################################################
@@ -1265,8 +1723,47 @@ Response
 
 Function Get-PsArkDelegateForgedByAccount {
 
-    # TODO
+  [CmdletBinding()]
+  Param(
+      [parameter(Mandatory = $True)]
+      [System.String] $URI,
+
+      [parameter(Mandatory = $True)]
+      [System.String] $GeneratorPublicKey
+      )
+
+  $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/delegates/forging/getForgedByAccount?generatorPublicKey='+$GeneratorPublicKey )
+  if( $Output.success -eq $True )
+  {
+    $Output | Select-Object -Property fees, rewards, forged
+  }
 }
+
+##########################################################################################################################################################################################################
+
+
+
+<#
+Undocumented
+#>
+
+Function Get-PsArkDelegateForgingStatus {
+
+    [CmdletBinding()]
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
+
+    [parameter(Mandatory = $True)]
+    [System.String] $PublicKey
+        )
+
+  $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/delegates/forging/status?publicKey='+$PublicKey )
+  if( $Output.success -eq $True ) { $Output.enabled }
+
+}
+
+
 
 ##########################################################################################################################################################################################################
 
@@ -1294,7 +1791,17 @@ Response
 
 Function Get-PsArkDelegateNextForgers {
 
-    # TODO
+  [CmdletBinding()]
+  Param(
+      [parameter(Mandatory = $True)]
+      [System.String] $URI
+      )
+
+  $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/delegates/getNextForgers?limit=101' )
+  if( $Output.success -eq $True )
+  {
+    $Output | Select-Object -Property CurrentBlock, CurrentSlot, Delegates
+  }
 }
 
 ##########################################################################################################################################################################################################
@@ -1394,7 +1901,30 @@ Response
 
 Function Enable-PsArkDelegateForging {
 
-    # TODO
+    [CmdletBinding()]
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
+
+        [parameter(Mandatory = $True)]
+    [System.String] $Secret
+        )
+
+  $Private:Output = Invoke-LwdApiCall -Method Post -URI $( $URI+'api/delegates/forging/enable' ) -Body @{secret=$Secret}
+
+  Write-Host "DEBUG | Enable-LwdDelegateForging"
+  Write-Host ( $Output | FL * | Out-String )
+
+  if( $Output.success -eq $True )
+  {
+    #$Output.publicKey
+    <#
+    New-Object PSObject -Property @{
+      'PublicKey'  = $Output.publicKey
+      'Address'    = 'NOT CODED YET!'
+      }
+    #>
+  }
 }
 
 ##########################################################################################################################################################################################################
@@ -1415,77 +1945,30 @@ Response
 
 Function Disable-PsArkDelegateForging {
 
-    # TODO
-}
+   [CmdletBinding()]
+    Param(
+        [parameter(Mandatory = $True)]
+    [System.String] $URI,
 
+        [parameter(Mandatory = $True)]
+    [System.String] $Secret
+        )
 
-##########################################################################################################################################################################################################
-### API Call: Signatures
-##########################################################################################################################################################################################################
+  $Private:Output = Invoke-LwdApiCall -Method Post -URI $( $URI+'api/delegates/forging/disable' ) -Body @{secret=$Secret}
 
-<#
-Get Signature Fees
+  Write-Host "DEBUG | Disable-LwdDelegateForging"
+  Write-Host ( $Output | FL * | Out-String )
 
-Gets the second signature status of an account.
-
-GET /api/signatures/fee
-
-Response
-
-"fee" : Integer
-#>
-
-Function Get-PsArkSignatureFee {
-
-    # TODO
-}
-
-##########################################################################################################################################################################################################
-
-<#
-Add second signature
-
-Add a second signature to an account.
-
-PUT /api/signatures
-
-Request
-
-{
-  "secret": "secret key of account",
-  "secondsecret": "second secret key of account",
-  "publicKey": "optional, to verify valid secret key and account"
-}
-
-Response
-
-{
-   "success": true,
-   "transaction": {
-      "type": "Type of transaction. Integer",
-      "amount": "Amount. Integer",
-      "senderPublicKey": "Sender public key. String",
-      "requesterPublicKey": "Requester public key. String",
-      "timestamp": Integer,
-      "asset":{
-         "signature":{
-            "publicKey": "Public key. String"
-         }
-      },
-      "recipientId": "Recipient address. String",
-      "signature": "Signature. String",
-      "id": "Tx ID. String",
-      "fee": "Fee Integer",
-      "senderId": "Sender address. String",
-      "relays": "Propagation. Integer",
-      "receivedAt": "Time. String"
-   }
-}
-#>
-
-Function Add-PsArkSecondSignature {
-
-    # TODO
+  if( $Output.success -eq $True )
+  {
+    #$Output.publicKey
+    <#
+    New-Object PSObject -Property @{
+      'PublicKey'  = $Output.publicKey
+      'Address'    = 'NOT CODED YET!'
+      }
+    #>
+  }
 }
 
 
@@ -1639,7 +2122,7 @@ Function Approve-PsArkMultiSigTransaction {
 ### Miscellaneous
 ##########################################################################################################################################################################################################
 
-Function Invoke-PsPsArkApiCall {
+Function Invoke-PsArkApiCall {
 
     [CmdletBinding()]
     Param(
@@ -1739,9 +2222,9 @@ Function ConvertFrom-PsArkBase64 {
 # Account #--------------------------------------------------------------------------
 
 Export-ModuleMember -Function Get-PsArkAccount
-#Export-ModuleMember -Function Get-PsArkAccountBalance
-#Export-ModuleMember -Function Get-PsArkAccountPublicKey
-#Export-ModuleMember -Function Get-PsArkAccountVote
+Export-ModuleMember -Function Get-PsArkAccountBalance
+Export-ModuleMember -Function Get-PsArkAccountPublicKey
+Export-ModuleMember -Function Get-PsArkAccountVoteList
 #Export-ModuleMember -Function Get-PsArkAccountSecondSignature
 
 #Export-ModuleMember -Function New-PsArkAccount
@@ -1758,10 +2241,13 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 
 # Transactions #---------------------------------------------------------------------
 
-#Export-ModuleMember -Function Get-PsArkTransaction
+#Export-ModuleMember -Function Get-PsArkTransactionById
 #Export-ModuleMember -Function Get-PsArkTransactionList
-#Export-ModuleMember -Function Get-PsArkTransactionUnconfirmed
-#Export-ModuleMember -Function Get-PsArkTransactionUnconfirmedList
+#Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionById
+#Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
+#Export-ModuleMember -Function Get-PsArkQueuedTransactionById
+#Export-ModuleMember -Function Get-PsArkQueuedTransactionList
+
 #Export-ModuleMember -Function Send-PsArkTransaction
 
 # Peers #----------------------------------------------------------------------------
@@ -1775,6 +2261,7 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 #Export-ModuleMember -Function Get-PsArkBlockById
 #Export-ModuleMember -Function Get-PsArkBlockList
 #Export-ModuleMember -Function Get-PsArkBlockchainTransactionFee
+#Export-ModuleMember -Function Get-PsArkBlockchainSignatureFee
 #Export-ModuleMember -Function Get-PsArkBlockchainAllFee
 #Export-ModuleMember -Function Get-PsArkBlockchainReward
 #Export-ModuleMember -Function Get-PsArkBlockchainSupply
@@ -1792,17 +2279,13 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 #Export-ModuleMember -Function Get-PsArkDelegateVoterList
 #Export-ModuleMember -Function Get-PsArkDelegateCount
 #Export-ModuleMember -Function Get-PsArkDelegateForgedByAccount
+#Export-ModuleMember -Function Get-PsArkDelegateForgingStatus
 #Export-ModuleMember -Function Get-PsArkDelegateNextForgers
 
 #Export-ModuleMember -Function New-PsArkDelegateAccount
 #Export-ModuleMember -Function Search-PsArkDelegate
 #Export-ModuleMember -Function Enable-PsArkDelegateForging
 #Export-ModuleMember -Function Disable-PsArkDelegateForging
-
-# Signature #------------------------------------------------------------------------
-
-#Export-ModuleMember -Function Get-PsArkSignatureFee
-#Export-ModuleMember -Function Add-PsArkSecondSignature
 
 # Multi-Signature #------------------------------------------------------------------
 

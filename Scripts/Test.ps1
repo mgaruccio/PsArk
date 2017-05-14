@@ -2,7 +2,7 @@
 
 Version :   0.1.0.0
 Author  :   Gr33nDrag0n
-History :   2017/04/24 - Release v0.1.0.0
+History :   2017/04/25 - Release v0.1.0.0
             2017/04/20 - Creation of the script.
 
 ##########################################################################################################################################>
@@ -79,11 +79,27 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Account' ) )
     Write-Host ''
 
     Write-Host "Command: Get-PsArkAccount -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
-    Get-PsArkAccount -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress | FL *
+    $Account = Get-PsArkAccount -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress
+	#$Account | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+	$Account | FL *
 
-    #Get-PsArkAccountBalance
-    #Get-PsArkAccountPublicKey
-    #Get-PsArkAccountVote
+    Write-Host "Command: Get-PsArkAccountBalance -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
+    $AccountBalance = Get-PsArkAccountBalance -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress
+	#$AccountBalance | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+	$AccountBalance | FL *
+
+    Write-Host "Command: Get-PsArkAccountPublicKey -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
+    $AccountPublicKey = Get-PsArkAccountPublicKey -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress
+	Write-Host ''
+	$AccountPublicKey
+	Write-Host ''
+
+    Write-Host "Command: Get-PsArkAccountVoteList -URL $($MyConfig.Servers[0]) -Address $($MyConfig.Account.DelegateAddress)" -Foreground Cyan
+    $AccountVoteList = Get-PsArkAccountVoteList -URL $MyConfig.Servers[0] -Address $MyConfig.Account.DelegateAddress
+	#$AccountVoteList | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+	$AccountVoteList | FL *
+
+	
     #Get-PsArkAccountSecondSignature
 
     #New-PsArkAccount
@@ -123,10 +139,12 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Transaction' ) )
     Write-Host '##### API Call: TRANSACTION ####################################################' -Foreground Yellow
     Write-Host ''
 
-    #Get-PsArkTransaction
-    #Get-PsArkTransactionList
-    #Get-PsArkTransactionUnconfirmed
-    #Get-PsArkTransactionUnconfirmedList
+	#Get-PsArkTransactionById
+	#Get-PsArkTransactionList
+	#Get-PsArkUnconfirmedTransactionById
+	#Get-PsArkUnconfirmedTransactionList
+	#Get-PsArkQueuedTransactionById
+	#Get-PsArkQueuedTransactionList
 
     #Send-PsArkTransaction
 }
@@ -151,6 +169,7 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Block' ) )
     #Get-PsArkBlockById
     #Get-PsArkBlockList
     #Get-PsArkBlockchainTransactionFee
+    #Get-PsArkBlockchainSignatureFee
     #Get-PsArkBlockchainAllFee
     #Get-PsArkBlockchainReward
     #Get-PsArkBlockchainSupply
@@ -173,23 +192,13 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Delegate' ) )
     #Get-PsArkDelegateVoterList
     #Get-PsArkDelegateCount
     #Get-PsArkDelegateForgedByAccount
+    #Get-PsArkDelegateForgingStatus
     #Get-PsArkDelegateNextForgers
 
     #New-PsArkDelegateAccount
     #Search-PsArkDelegate
     #Enable-PsArkDelegateForging
     #Disable-PsArkDelegateForging
-}
-
-if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Signature' ) )
-{
-    Write-Host ''
-    Write-Host '##### API Call: SIGNATURE ######################################################' -Foreground Yellow
-    Write-Host ''
-
-    #Get-PsArkSignatureFee
-
-    #Add-PsArkSecondSignature
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'MultiSig' ) )
