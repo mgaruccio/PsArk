@@ -1,9 +1,9 @@
 <##########################################################################################################################################
 
-Version :	0.1.0.0
-Author  :	Gr33nDrag0n
-History :	2017/04/24 - Release v0.1.0.0
-			2017/04/20 - Creation of the script.
+Version :   0.1.0.0
+Author  :   Gr33nDrag0n
+History :   2017/04/24 - Release v0.1.0.0
+            2017/04/20 - Creation of the script.
 
 ##########################################################################################################################################>
 
@@ -21,7 +21,7 @@ if( Get-Module -ListAvailable | Where-Object { $_.Name -eq 'PsArk' } )
   Import-Module PsArk
 }
 else
-{   
+{
   Write-Warning 'PsArk Module Not Found'
   Exit
 }
@@ -38,21 +38,21 @@ Write-Host " $CmdletList_Count PsArk cmdlet found."
 Write-Host ''
 ForEach( $Private:CmdletName in $CmdletList)
 {
-	Write-Host "Processing: $CmdletName"
-	Get-Help $CmdletName -Full > "..\Documentation\$CmdletName.txt"
-	
-	# Remove from file
+    Write-Host "Processing: $CmdletName"
+    Get-Help $CmdletName -Full > "..\Documentation\$CmdletName.txt"
+
+    # Remove from file
 <#
     <CommonParameters>
         This cmdlet supports the common parameters: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-        OutBuffer, PipelineVariable, and OutVariable. For more information, see 
-        about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216). 
-    
+        OutBuffer, PipelineVariable, and OutVariable. For more information, see
+        about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+
 INPUTS
-    
+
 OUTPUTS
-    
+
 #>
 }
 Write-Host ''

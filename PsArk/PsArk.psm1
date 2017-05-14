@@ -109,31 +109,31 @@ $Script:PsArk_Version = 'v0.1.0.0'
 .DESCRIPTION
     Return a custom object with following properties:
 
-		Address                    : Address of account. [String]
-		
-		PublicKey                  : Public key of account. [String]
-		
-		SecondPublicKey            : Second signature public key. [String]
+        Address                    : Address of account. [String]
 
-		Balance                    : Balance of account in 'satoshi'. [String]
+        PublicKey                  : Public key of account. [String]
+
+        SecondPublicKey            : Second signature public key. [String]
+
+        Balance                    : Balance of account in 'satoshi'. [String]
                                  1.1 Ark = 110000000 Value
 
-		BalanceFloat               : Balance of account in 'float'. [Double]
+        BalanceFloat               : Balance of account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
 
-		UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
+        UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
                                  1.1 Ark = 110000000 Value
 
-		UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
+        UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
 
-		SecondSignature            : If second signature is enabled. [Boolean]
-		
-		UnconfirmedSecondSignature : If second signature is enabled. (But it's still not confirmed.) [Boolean]
+        SecondSignature            : If second signature is enabled. [Boolean]
 
-		MultiSignatures            : (No infos available.) [Array]
-		
-		UnconfirmedMultiSignatures : (No infos available.) [Array]
+        UnconfirmedSecondSignature : If second signature is enabled. (But it's still not confirmed.) [Boolean]
+
+        MultiSignatures            : (No infos available.) [Array]
+
+        UnconfirmedMultiSignatures : (No infos available.) [Array]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -181,18 +181,18 @@ Function Get-PsArkAccount {
 .DESCRIPTION
     Return a custom object with following properties:
 
-		Address                    : Address of account. [String]
+        Address                    : Address of account. [String]
 
-		Balance                    : Balance of account in 'satoshi'. [String]
+        Balance                    : Balance of account in 'satoshi'. [String]
                                  1.1 Ark = 110000000 Value
 
-		BalanceFloat               : Balance of account in 'float'. [Double]
+        BalanceFloat               : Balance of account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
 
-		UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
+        UnconfirmedBalance         : Unconfirmed Balance of account in 'satoshi'. [String]
                                  1.1 Ark = 110000000 Value
 
-		UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
+        UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
 
 .PARAMETER URL
@@ -275,27 +275,27 @@ Function Get-PsArkAccountPublicKey {
 
     The list (array) contain custom 'Delegate' object with following properties:
 
-		Name                       : Delegate name of the account. [String]
-		
-		Address                    : Address of account. [String]
-		
-		PublicKey                  : Public Key of account. [String]
-		
-		Vote                       : Total number of vote of the account in 'satoshi'. [String]
+        Name                       : Delegate name of the account. [String]
+
+        Address                    : Address of account. [String]
+
+        PublicKey                  : Public Key of account. [String]
+
+        Vote                       : Total number of vote of the account in 'satoshi'. [String]
                                  1.1 Ark = 110000000 Value
-									 
-		VoteFloat                  : Total number of vote of the account in 'float'. [Double]
+
+        VoteFloat                  : Total number of vote of the account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
-									 
-		ProducedBlocks             : Number of forged block(s) by the account. [Int32]
-		
-		MissedBlocks               : Number of missed block(s) by the account. [Int32]
-		
-		Rate                       : Delegate rank [Int32]
-		
-		Approval                   : Delegate vote approval [Decimal]
-		
-		Productivity               : Delegate productivity [Decimal]
+
+        ProducedBlocks             : Number of forged block(s) by the account. [Int32]
+
+        MissedBlocks               : Number of missed block(s) by the account. [Int32]
+
+        Rate                       : Delegate rank [Int32]
+
+        Approval                   : Delegate vote approval [Decimal]
+
+        Productivity               : Delegate productivity [Decimal]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
