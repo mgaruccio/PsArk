@@ -2,7 +2,7 @@
 
 Version :   0.1.0.0
 Author  :   Gr33nDrag0n
-History :   2017/05/13 - Release v0.1.0.0
+History :   2017/05/14 - Release v0.1.0.0
             2017/04/20 - Creation of the module.
 
 Reference : https://github.com/LiskHQ/lisk-wiki/wiki/Lisk-API-Reference
@@ -13,13 +13,13 @@ Get-PsArkAccount                                    Code + Help         Public
 Get-PsArkAccountBalance                             Code + Help         Public
 Get-PsArkAccountPublicKey                           Code + Help         Public
 Get-PsArkAccountVoteList                            Code + Help         Public
-Get-PsArkAccountSecondSignature (Deprecated !?)     Struct              Public
+Get-PsArkAccountSecondSignature (Deprecated !?)     Struct              Hidden
 
-New-PsArkAccount                                    Struct              Public
-Open-PsArkAccount                                   Struct              Public
-Add-PsArkAccountVote                                Struct              Public
-Remove-PsArkAccountVote                             Struct              Public
-Add-PsArkAccountSecondSignature                     Struct              Public
+New-PsArkAccount                                    Struct              Hidden
+Open-PsArkAccount                                   Struct              Hidden
+Add-PsArkAccountVote                                Struct              Hidden
+Remove-PsArkAccountVote                             Struct              Hidden
+Add-PsArkAccountSecondSignature                     Struct              Hidden
 
 # Loader #---------------------------------------------------------------------------
 
@@ -29,59 +29,59 @@ Get-PsArkBlockReceiptStatus                         Code + Help         Public
 
 # Transactions #---------------------------------------------------------------------
 
-Get-PsArkTransactionById                            Struct              Public
-Get-PsArkTransactionList                            Struct              Public
-Get-PsArkUnconfirmedTransactionById                 Struct              Public
-Get-PsArkUnconfirmedTransactionList                 Struct              Public
-Get-PsArkQueuedTransactionById                      Struct              Public
-Get-PsArkQueuedTransactionList                      Struct              Public
+Get-PsArkTransactionById                            Struct              Hidden
+Get-PsArkTransactionList                            Struct              Hidden
+Get-PsArkUnconfirmedTransactionById                 Struct              Hidden
+Get-PsArkUnconfirmedTransactionList                 Struct              Hidden
+Get-PsArkQueuedTransactionById                      Struct              Hidden
+Get-PsArkQueuedTransactionList                      Struct              Hidden
 
-Send-PsArkTransaction                               Struct              Public
+Send-PsArkTransaction                               Struct              Hidden
 
 # Peers #----------------------------------------------------------------------------
 
-Get-PsArkPeer                                       Struct              Public
-Get-PsArkPeerList                                   Struct              Public
-Get-PsArkPeerVersion                                Struct              Public
+Get-PsArkPeer                                       Code + Help         Public
+Get-PsArkPeerList                                   Code + Help         Public
+Get-PsArkPeerVersion                                Code                Disabled
 
 # Block / Blockchain #--------------------------------------------------------------
 
-Get-PsArkBlockById                                  Struct              Public
-Get-PsArkBlockList                                  Struct              Public
-Get-PsArkBlockchainTransactionFee                   Struct              Public
-Get-PsArkBlockchainSignatureFee                     Struct              Public
-Get-PsArkBlockchainAllFee                           Struct              Public
-Get-PsArkBlockchainReward                           Struct              Public
-Get-PsArkBlockchainSupply                           Struct              Public
-Get-PsArkBlockchainHeight                           Struct              Public
-Get-PsArkBlockchainStatus                           Struct              Public
-Get-PsArkBlockchainNethash                          Struct              Public
-Get-PsArkBlockchainMilestone                        Struct              Public
+Get-PsArkBlockById                                  Struct              Hidden
+Get-PsArkBlockList                                  Struct              Hidden
+Get-PsArkBlockchainTransactionFee                   Struct              Hidden
+Get-PsArkBlockchainSignatureFee                     Struct              Hidden
+Get-PsArkBlockchainAllFee                           Struct              Hidden
+Get-PsArkBlockchainReward                           Struct              Hidden
+Get-PsArkBlockchainSupply                           Struct              Hidden
+Get-PsArkBlockchainHeight                           Struct              Hidden
+Get-PsArkBlockchainStatus                           Struct              Hidden
+Get-PsArkBlockchainNethash                          Struct              Hidden
+Get-PsArkBlockchainMilestone                        Struct              Hidden
 
 # Delegates #------------------------------------------------------------------------
 
-Get-PsArkDelegateByPublicKey                        Struct              Public
-Get-PsArkDelegateByUsername                         Struct              Public
-Get-PsArkDelegateByTransactionId (Removed?)         Struct              Public
-Get-PsArkDelegateList                               Struct              Public
-Get-PsArkDelegateVoterList                          Struct              Public
-Get-PsArkDelegateCount                              Struct              Public
-Get-PsArkDelegateForgedByAccount                    Struct              Public
-Get-PsArkDelegateForgingStatus                      Struct              Public
-Get-PsArkDelegateNextForgers                        Struct              Public
+Get-PsArkDelegateByPublicKey                        Struct              Hidden
+Get-PsArkDelegateByUsername                         Struct              Hidden
+Get-PsArkDelegateByTransactionId (Removed?)         Struct              Hidden
+Get-PsArkDelegateList                               Struct              Hidden
+Get-PsArkDelegateVoterList                          Struct              Hidden
+Get-PsArkDelegateCount                              Struct              Hidden
+Get-PsArkDelegateForgedByAccount                    Struct              Hidden
+Get-PsArkDelegateForgingStatus                      Struct              Hidden
+Get-PsArkDelegateNextForgers                        Struct              Hidden
 
-New-PsArkDelegateAccount                            Struct              Public
-Search-PsArkDelegate                                Struct              Public
-Enable-PsArkDelegateForging                         Struct              Public
-Disable-PsArkDelegateForging                        Struct              Public
+New-PsArkDelegateAccount                            Struct              Hidden
+Search-PsArkDelegate                                Struct              Hidden
+Enable-PsArkDelegateForging                         Struct              Hidden
+Disable-PsArkDelegateForging                        Struct              Hidden
 
 # Multi-Signature #------------------------------------------------------------------
 
-Get-PsArkMultiSigPendingTransactionList             Struct              Public
-Get-PsArkMultiSigAccountList                        Struct              Public
+Get-PsArkMultiSigPendingTransactionList             Struct              Hidden
+Get-PsArkMultiSigAccountList                        Struct              Hidden
 
-New-PsArkMultiSigAccount                            Struct              Public
-Approve-PsArkMultiSigTransaction                    Struct              Public
+New-PsArkMultiSigAccount                            Struct              Hidden
+Approve-PsArkMultiSigTransaction                    Struct              Hidden
 
 #### Misc. Functions ################################################################
 
@@ -634,14 +634,16 @@ Function Add-PsArkAccountSecondSignature {
 
 <#
 .SYNOPSIS
-    API Call: Get the synchronisation status of the client.
+    Get the synchronisation status of the client.
 
 .DESCRIPTION
     Return a custom object with following properties:
 
-    Loaded      : Blockchain loaded? [Bool]
-    Now         : Last block loaded during loading time. [Int]
-    BlocksCount : Total blocks count in blockchain at loading time. [Int]
+        Loaded      : Blockchain loaded? [Bool]
+
+        Now         : Last block loaded during loading time. [Int]
+
+        BlocksCount : Total blocks count in blockchain at loading time. [Int]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -650,8 +652,8 @@ Function Add-PsArkAccountSecondSignature {
     Get-PsArkLoadingStatus -URL https://api.arknode.net/
 #>
 
-Function Get-PsArkLoadingStatus
-{
+Function Get-PsArkLoadingStatus {
+
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)]
@@ -681,15 +683,18 @@ Lisk is different.
 
 <#
 .SYNOPSIS
-    API Call: Get the synchronisation status of the client.
+    Get the synchronisation status of the client.
 
 .DESCRIPTION
     Return a custom object with following properties:
 
-    Syncing : Sync. in progress? [Bool]
-    Blocks  : Number of blocks remaining to sync. [Int]
-    Height  : Total blocks in blockchain. [Int]
-    BlockID : Current height block ID [String]
+        Syncing : Sync. in progress? [Bool]
+
+        Blocks  : Number of blocks remaining to sync. [Int]
+
+        Height  : Total blocks in blockchain. [Int]
+
+        BlockID : Current height block ID [String]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -698,8 +703,8 @@ Lisk is different.
     Get-PsArkSyncStatus -URL https://api.arknode.net/
 #>
 
-Function Get-PsArkSyncStatus
-{
+Function Get-PsArkSyncStatus {
+
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)]
@@ -720,7 +725,7 @@ Function Get-PsArkSyncStatus
 
 <#
 .SYNOPSIS
-    API Call: Get the status of last received block.
+    Get the status of last received block.
 
 .DESCRIPTION
     Returns True [Bool] if block was received in the past 120 seconds.
@@ -1040,43 +1045,119 @@ Function Send-PsArkTransaction {
 ##########################################################################################################################################################################################################
 
 <#
-Get peer
+    Lisk ONLY
 
-Gets peer by IP address and port
+    "state":"1 - disconnected. 2 - connected. 0 - banned. Integer",
+    "broadhash":"Peer block propagation efficiency and reliability. String",
+#>
 
-GET /api/peers/get?ip=ip&port=port
+<#
+.SYNOPSIS
+    Get a single peer details using IP & Port.
 
-    ip: Ip of peer. (String)
-    port: Port of peer. (Integer)
+.DESCRIPTION
+    Return a custom object with following properties:
 
-Response
+        IP       : Requested IP. [String]
 
-{
-  "success": true,
-  "peer": {
-        "ip":"Requested ip. String",
-        "port":"Requested port. Integer",
-        "state":"1 - disconnected. 2 - connected. 0 - banned. Integer",
-        "os":"Operating system. String",
-        "version":"Lisk client version. String",
-        "broadhash":"Peer block propagation efficiency and reliability. String",
-        "height":"Blockchain height. Integer"
-  }
-}
+        Port     : Requested Port. [Int32]
+
+        Version  : Client Version. [String]
+
+        OS       : Operating System. [String]
+
+        Height   : BlockChain Height. [Int32]
+
+        Status   : Client Status. (See note below) [String]
+
+        Delay    : (Undocumented) [Int32]
+
+
+    Status Property can have multiple values.
+
+		OK         : Normal Status.
+
+        # Ark Internal Errors
+		
+        FORK       : Peer is not in sync. with network.
+        EAPI       : Returned data does not match API requirement.
+        ENETHASH   : Peer is not on the same network.
+        ERESPONSE  : Received bad response code.
+
+        # Popsicle Errors
+		
+		EUNAVAILABLE  : Unable to connect to the remote URL.
+        ETIMEOUT      : Request has exceeded the allowed timeout
+		
+		Many others Status are possible, see https://github.com/blakeembrey/popsicle#errors for more infos.
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER IP
+    IP of the chosen peer.
+
+.PARAMETER Port
+    Port of the chosen peer.
+
+.EXAMPLE
+    $PeerInfo = Get-PsArkPeer -URL https://api.arknode.net/ -IP 149.56.126.216 -Port 4001
+
 #>
 
 Function Get-PsArkPeer {
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $Script:PsArk_URL+'peers' )
-    if( $Output.success -eq $True ) { $Output.peers }
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $IP,
+
+        [parameter(Mandatory = $True)]
+        [System.Int32] $Port
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/get?ip=' + $IP + '&port=' + $Port )
+    if( $Output.success -eq $True )
+    {
+        $Output.peer | Select-Object -Property  @{Label="IP";Expression={$IP}}, `
+                                                @{Label="Port";Expression={$Port}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="OS";Expression={$_.os}}, `
+                                                @{Label="Height";Expression={[Int32] $_.height}}, `
+                                                @{Label="Status";Expression={$_.status}}, `
+                                                @{Label="Delay";Expression={$_.delay}}
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get peers list
+Lisk is VERY different! Filter parameters are needed like limit and offset to get full list.
 
-Gets list of peers from provided filter parameters.
+Return the list of peers from provided filter parameters. [Array]
+All Filter parameters are optional.
+If more then one filter is used, they are join by OR.
+If no filter is used, the default values are used.
+
+State		Filter peer by state.
+OS			Filter peer by os.
+Version		Filter peer by version.
+Limit		Limit the number of results returned. Default (Max) to 100.
+Offset		Offset of returned results in the peers list. Default to 0.
+
+if( $OS -ne '' )
+{
+	if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?os=' + $OS }
+	else { $ApiQuery = $ApiQuery + '&os=' + $OS }
+}
+
+if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?limit=' + $Limit }
+else { $ApiQuery = $ApiQuery + '&limit=' + $Limit }
+
+if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?offset=' + $Offset }
+else { $ApiQuery = $ApiQuery + '&offset=' + $Offset }
 
 GET /api/peers?state=state&os=os&version=version&limit=limit&offset=offset&orderBy=orderBy
 
@@ -1089,46 +1170,92 @@ GET /api/peers?state=state&os=os&version=version&limit=limit&offset=offset&order
 
 All parameters joins by "OR".
 
-Example:
-/api/peers?state=1&version=0.3.2 looks like: state=1 OR version=0.3.2
+Example:	/api/peers?state=1&version=0.3.2 looks like: state=1 OR version=0.3.2
 
-Response
+Ark is simpler. All peers are returned and filtering is done in native language.
+#>
 
-{
-  "success": true,
-  "peers": [
-    "List of peers as objects (see below the peer object response)"
-  ]
-}
+<#
+.SYNOPSIS
+    Gets list of peers.
+
+.DESCRIPTION
+    Return the list of peers. [Array]
+	
+    The list (array) contain custom 'Peer' object with following properties:
+
+        IP       : Requested IP. [String]
+
+        Port     : Requested Port. [Int32]
+
+        Version  : Client Version. [String]
+
+        OS       : Operating System. [String]
+
+        Height   : BlockChain Height. [Int32]
+
+        Status   : Client Status. (See note below) [String]
+
+        Delay    : (Undocumented) [Int32]
+
+
+		Status Property can have multiple values.
+
+		OK            : Normal Status.
+		EUNAVAILABLE  : Unable to connect to the remote URL.
+        ETIMEOUT      : Request has exceeded the allowed timeout
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.EXAMPLE
+	$PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
+
 #>
 
 Function Get-PsArkPeerList {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL
+		)
+		
+	$Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers' )
+    if( $Output.success -eq $True )
+    {
+		$Output.peers | Select-Object -Property @{Label="IP";Expression={$_.ip}}, `
+                                                @{Label="Port";Expression={$_.port}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="OS";Expression={$_.os}}, `
+                                                @{Label="Height";Expression={[Int32] $_.height}}, `
+                                                @{Label="Status";Expression={$_.status}}, `
+                                                @{Label="Delay";Expression={$_.delay}}
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get peer version, build time
+DISABLED: Lisk Only. Irrelevent for Ark since only v1.0.0 & empty Build are returned so far ...
 
-Gets a list peer versions and build times
-
-GET /api/peers/version
-
-Response
-
-{
-  "success": true,
-  "version": "Version of Lisk. String",
-  "build": "Time of build. String"
-}
-#>
+Get peer version and build time
 
 Function Get-PsArkPeerVersion {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL
+		)
+		
+	$Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/version' )
+    if( $Output.success -eq $True )
+    {
+		$Output.peers | Select-Object -Property @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="Build";Expression={$_.build}}
+    }
 }
+
+#>
 
 ##########################################################################################################################################################################################################
 ### API Call: Block / Blockchain
@@ -1207,29 +1334,6 @@ Response
 #>
 
 Function Get-PsArkBlockList {
-
-    # TODO
-}
-
-##########################################################################################################################################################################################################
-
-<#
-Get blockchain fee
-
-Get transaction fee for sending "normal" transactions.
-
-GET /api/blocks/getFee
-
-Response
-
-{
-  "success": true,
-  "fee": Integer
-}
-#>
-
-Function Get-PsArkBlockchainTransactionFee {
-
 
     Param(
         [parameter(Mandatory = $True)]
@@ -1312,6 +1416,29 @@ Function Get-PsArkBlockchainTransactionFee {
     $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/blocks'+$Query )
     if( $Output.success -eq $True ) { $Output.blocks }
   }
+
+}
+
+##########################################################################################################################################################################################################
+
+<#
+Get blockchain fee
+
+Get transaction fee for sending "normal" transactions.
+
+GET /api/blocks/getFee
+
+Response
+
+{
+  "success": true,
+  "fee": Integer
+}
+#>
+
+Function Get-PsArkBlockchainTransactionFee {
+
+	# TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -2252,9 +2379,8 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 
 # Peers #----------------------------------------------------------------------------
 
-#Export-ModuleMember -Function Get-PsArkPeer
-#Export-ModuleMember -Function Get-PsArkPeerList
-#Export-ModuleMember -Function Get-PsArkPeerVersion
+Export-ModuleMember -Function Get-PsArkPeer
+Export-ModuleMember -Function Get-PsArkPeerList
 
 # Block / Blockchain #--------------------------------------------------------------
 

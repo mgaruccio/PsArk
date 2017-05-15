@@ -2,7 +2,7 @@
 
 Version :   0.1.0.0
 Author  :   Gr33nDrag0n
-History :   2017/04/25 - Release v0.1.0.0
+History :   2017/05/14 - Release v0.1.0.0
             2017/04/20 - Creation of the script.
 
 ##########################################################################################################################################>
@@ -71,6 +71,8 @@ Write-Host '##### LOADED CONFIGURATION #########################################
 
 $MyConfig.Account
 $MyConfig.Servers
+$MyConfig.VendorField
+$MyConfig.Peer
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Account' ) )
 {
@@ -111,7 +113,7 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Account' ) )
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Loader' ) )
 {
-        Write-Host ''
+    Write-Host ''
     Write-Host '##### API Call: LOADER #########################################################' -Foreground Yellow
     Write-Host ''
 
@@ -155,9 +157,25 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Peer' ) )
     Write-Host '##### API Call: PEER ###########################################################' -Foreground Yellow
     Write-Host ''
 
-    #Get-PsArkPeer
-    #Get-PsArkPeerList
-    #Get-PsArkPeerVersion
+    Write-Host "Command: Get-PsArkPeer -URL $($MyConfig.Servers[0]) -IP $($MyConfig.Peer.IP) -Port $($MyConfig.Peer.Port)" -Foreground Cyan
+    $PeerInfo = Get-PsArkPeer -URL $MyConfig.Servers[0] -IP $MyConfig.Peer.IP -Port $MyConfig.Peer.Port
+    #$PeerInfo | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    $PeerInfo | FL *
+
+    Write-Host "Command: Get-PsArkPeerList -URL $($MyConfig.Servers[0])" -Foreground Cyan
+    $PeerList = Get-PsArkPeerList -URL $MyConfig.Servers[0]
+    #$PeerList | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    #$PeerList | FL *
+	#$PeerList | Measure-Object | Select-Object -ExpandProperty Count
+	#$PeerList | Group-Object -Property Status
+	#$PeerList | Group-Object -Property OS | Sort-Object -Property Count -Descending | Format-Table -Property Count, Name
+	$GoodPeerList = $PeerList | Where-Object { $_.Status -eq 'OK' }
+	$GoodPeerList | Measure-Object | Select-Object -ExpandProperty Count
+	#$GoodPeerList | Group-Object -Property OS | Sort-Object -Property Count -Descending | Format-Table -Property Count, Name
+	#$GoodPeerList | Group-Object -Property Version | Sort-Object -Property Count -Descending | Format-Table -Property Count, Name
+	#$GoodPeerList | Group-Object -Property Port | Sort-Object -Property Count -Descending | Format-Table -Property Count, Name
+	#$GoodPeerList | Group-Object -Property Port | Sort-Object -Property Count -Descending | Format-Table -Property Count, Name
+	$GoodPeerList | Select-Object -First 3 | FL *
 }
 
 if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Block' ) )
