@@ -184,7 +184,21 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Block' ) )
     Write-Host '##### API Call: BLOCK / BLOCKCHAIN #############################################' -Foreground Yellow
     Write-Host ''
 
-    #Get-PsArkBlockById
+    Write-Host "Command: Get-PsArkBlockById -URL $($MyConfig.Servers[0]) -ID 4407507243292764917" -Foreground Cyan
+    $BlockInfo = Get-PsArkBlockById -URL $MyConfig.Servers[0] -ID 4407507243292764917
+    #$BlockInfo | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    $BlockInfo | FL *
+	
+    Write-Host "Command: Get-PsArkBlockByHeight -URL $($MyConfig.Servers[0]) -Height 723647" -Foreground Cyan
+    $BlockInfo = Get-PsArkBlockByHeight -URL $MyConfig.Servers[0] -Height 723647
+    #$BlockInfo | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    $BlockInfo | FL *
+	
+    Write-Host "Command: Get-PsArkBlockByPreviousBlockID -URL $($MyConfig.Servers[0]) -ID 443216682634022798" -Foreground Cyan
+    $BlockInfo = Get-PsArkBlockByPreviousBlockID -URL $MyConfig.Servers[0] -ID 443216682634022798
+    #$BlockInfo | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    $BlockInfo | FL *
+	
     #Get-PsArkBlockList
     #Get-PsArkBlockchainTransactionFee
     #Get-PsArkBlockchainSignatureFee

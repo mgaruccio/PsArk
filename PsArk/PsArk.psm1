@@ -46,7 +46,11 @@ Get-PsArkPeerVersion                                Code                Disabled
 
 # Block / Blockchain #--------------------------------------------------------------
 
-Get-PsArkBlockById                                  Struct              Hidden
+Get-PsArkBlockByID                                  Code + Help         Public
+Get-PsArkBlockByHeight                              Code + Help         Public
+Get-PsArkBlockByPreviousBlockID                     Code + Help         Public
+
+
 Get-PsArkBlockList                                  Struct              Hidden
 Get-PsArkBlockchainTransactionFee                   Struct              Hidden
 Get-PsArkBlockchainSignatureFee                     Struct              Hidden
@@ -1075,21 +1079,21 @@ Function Send-PsArkTransaction {
 
     Status Property can have multiple values.
 
-		OK         : Normal Status.
+        OK         : Normal Status.
 
         # Ark Internal Errors
-		
+
         FORK       : Peer is not in sync. with network.
         EAPI       : Returned data does not match API requirement.
         ENETHASH   : Peer is not on the same network.
         ERESPONSE  : Received bad response code.
 
         # Popsicle Errors
-		
-		EUNAVAILABLE  : Unable to connect to the remote URL.
+
+        EUNAVAILABLE  : Unable to connect to the remote URL.
         ETIMEOUT      : Request has exceeded the allowed timeout
-		
-		Many others Status are possible, see https://github.com/blakeembrey/popsicle#errors for more infos.
+
+        Many others Status are possible, see https://github.com/blakeembrey/popsicle#errors for more infos.
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -1141,16 +1145,16 @@ All Filter parameters are optional.
 If more then one filter is used, they are join by OR.
 If no filter is used, the default values are used.
 
-State		Filter peer by state.
-OS			Filter peer by os.
-Version		Filter peer by version.
-Limit		Limit the number of results returned. Default (Max) to 100.
-Offset		Offset of returned results in the peers list. Default to 0.
+State       Filter peer by state.
+OS          Filter peer by os.
+Version     Filter peer by version.
+Limit       Limit the number of results returned. Default (Max) to 100.
+Offset      Offset of returned results in the peers list. Default to 0.
 
 if( $OS -ne '' )
 {
-	if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?os=' + $OS }
-	else { $ApiQuery = $ApiQuery + '&os=' + $OS }
+    if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?os=' + $OS }
+    else { $ApiQuery = $ApiQuery + '&os=' + $OS }
 }
 
 if( $ApiQuery -eq '' ) { $ApiQuery = $ApiQuery + '?limit=' + $Limit }
@@ -1170,7 +1174,7 @@ GET /api/peers?state=state&os=os&version=version&limit=limit&offset=offset&order
 
 All parameters joins by "OR".
 
-Example:	/api/peers?state=1&version=0.3.2 looks like: state=1 OR version=0.3.2
+Example:    /api/peers?state=1&version=0.3.2 looks like: state=1 OR version=0.3.2
 
 Ark is simpler. All peers are returned and filtering is done in native language.
 #>
@@ -1181,7 +1185,7 @@ Ark is simpler. All peers are returned and filtering is done in native language.
 
 .DESCRIPTION
     Return the list of peers. [Array]
-	
+
     The list (array) contain custom 'Peer' object with following properties:
 
         IP       : Requested IP. [String]
@@ -1199,17 +1203,17 @@ Ark is simpler. All peers are returned and filtering is done in native language.
         Delay    : (Undocumented) [Int32]
 
 
-		Status Property can have multiple values.
+        Status Property can have multiple values.
 
-		OK            : Normal Status.
-		EUNAVAILABLE  : Unable to connect to the remote URL.
+        OK            : Normal Status.
+        EUNAVAILABLE  : Unable to connect to the remote URL.
         ETIMEOUT      : Request has exceeded the allowed timeout
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
 
 .EXAMPLE
-	$PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
+    $PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
 
 #>
 
@@ -1218,12 +1222,12 @@ Function Get-PsArkPeerList {
     Param(
         [parameter(Mandatory = $True)]
         [System.String] $URL
-		)
-		
-	$Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers' )
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers' )
     if( $Output.success -eq $True )
     {
-		$Output.peers | Select-Object -Property @{Label="IP";Expression={$_.ip}}, `
+        $Output.peers | Select-Object -Property @{Label="IP";Expression={$_.ip}}, `
                                                 @{Label="Port";Expression={$_.port}}, `
                                                 @{Label="Version";Expression={$_.version}}, `
                                                 @{Label="OS";Expression={$_.os}}, `
@@ -1245,12 +1249,12 @@ Function Get-PsArkPeerVersion {
     Param(
         [parameter(Mandatory = $True)]
         [System.String] $URL
-		)
-		
-	$Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/version' )
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/version' )
     if( $Output.success -eq $True )
     {
-		$Output.peers | Select-Object -Property @{Label="Version";Expression={$_.version}}, `
+        $Output.peers | Select-Object -Property @{Label="Version";Expression={$_.version}}, `
                                                 @{Label="Build";Expression={$_.build}}
     }
 }
@@ -1262,42 +1266,262 @@ Function Get-PsArkPeerVersion {
 ##########################################################################################################################################################################################################
 
 <#
-Get block
+.SYNOPSIS
+    Get a single block details using BlockID.
 
-Gets block by provided id.
+.DESCRIPTION
+    Return a custom object with following properties:
 
-GET /api/blocks/get?id=id
+        ID                       : ID. [String]
 
-    id: Id of block.
+        Version                  : Version. [Int32]
 
-Response
+        Timestamp                : Timestamp. [Int32]
 
-{
-    "success": true,
-    "block": {
-        "id": "Id of block. String",
-        "version": "Version of block. Integer",
-        "timestamp": "Timestamp of block. Integer",
-        "height": "Height of block. Integer",
-        "previousBlock": "Previous block id. String",
-        "numberOfTransactions": "Number of transactions. Integer",
-        "totalAmount": "Total amount of block. Integer",
-        "totalFee": "Total fee of block. Integer",
-        "reward": "Reward block. Integer",
-        "payloadLength": "Payload length of block. Integer",
-        "payloadHash": "Payload hash of block. Integer",
-        "generatorPublicKey": "Generator public key. Hex",
-        "generatorId": "Generator id. String.",
-        "blockSignature": "Block signature. Hex",
-        "confirmations": "Block confirmations. Integer",
-        "totalForged": "Total block forged. Integer"
-    }
-}
+        Height                   : Height. [Int32]
+
+        PreviousBlockID          : Previous Block ID. [String]
+
+        Signature                : Block Signature. [String]
+
+        ConfirmCount             : Total # of block confirmation(s). [Int32]
+		
+        TransactionCount         : # of transaction(s) included in the block. [Int32]
+
+        TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
+
+        TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
+		
+        ForgerPublicKey          : Forger's Account Public Key. [String]
+
+        ForgerAddress            : Forger's Account Address. [String]
+		
+        ForgerBaseReward         : Forger's Base Reward. [Int32]
+
+        ForgerFinalReward        : Forger's Final Reward. [Int32]
+
+        PayloadLength            : Payload Length. [Int32]
+
+        PayloadHash              : Payload Hash. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER ID
+    BlockID matching the requested block.
+
+.EXAMPLE
+    $BlockInfo = Get-PsArkBlockByID -URL https://api.arknode.net/ -ID 5330406843623440624
+
 #>
 
-Function Get-PsArkBlockById {
+Function Get-PsArkBlockByID {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $ID
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks/get?id=' + $ID )
+    if( $Output.success -eq $True )
+    {
+        $Output.block | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="Timestamp";Expression={$_.timestamp}}, `
+                                                @{Label="Height";Expression={$_.height}}, `
+                                                @{Label="PreviousBlockID";Expression={$_.previousBlock}}, `
+                                                @{Label="Signature";Expression={$_.blockSignature}}, `
+                                                @{Label="ConfirmCount";Expression={$_.confirmations}}, `
+
+                                                @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
+                                                @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
+                                                @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
+												
+                                                @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
+                                                @{Label="ForgerAddress";Expression={$_.generatorId}}, `
+												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
+												
+                                                @{Label="PayloadLength";Expression={$_.payloadLength}}, `
+                                                @{Label="PayloadHash";Expression={$_.payloadHash}}
+    }
+}
+
+##########################################################################################################################################################################################################
+
+<#
+.SYNOPSIS
+    Get a single block details using Block Height.
+
+.DESCRIPTION
+    Return a custom object with following properties:
+
+        ID                       : ID. [String]
+
+        Version                  : Version. [Int32]
+
+        Timestamp                : Timestamp. [Int32]
+
+        Height                   : Height. [Int32]
+
+        PreviousBlockID          : Previous Block ID. [String]
+
+        Signature                : Block Signature. [String]
+
+        ConfirmCount             : Total # of block confirmation(s). [Int32]
+		
+        TransactionCount         : # of transaction(s) included in the block. [Int32]
+
+        TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
+
+        TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
+		
+        ForgerPublicKey          : Forger's Account Public Key. [String]
+
+        ForgerAddress            : Forger's Account Address. [String]
+		
+        ForgerBaseReward         : Forger's Base Reward. [Int32]
+
+        ForgerFinalReward        : Forger's Final Reward. [Int32]
+
+        PayloadLength            : Payload Length. [Int32]
+
+        PayloadHash              : Payload Hash. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER Height
+    Block Height matching the requested block.
+
+.EXAMPLE
+    $BlockInfo = Get-PsArkBlockByHeight -URL https://api.arknode.net/ -Height 723647
+
+#>
+
+Function Get-PsArkBlockByHeight {
+
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $Height
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?height=' + $Height )
+    if( $Output.success -eq $True )
+    {
+		$Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="Timestamp";Expression={$_.timestamp}}, `
+                                                @{Label="Height";Expression={$_.height}}, `
+                                                @{Label="PreviousBlockID";Expression={$_.previousBlock}}, `
+                                                @{Label="Signature";Expression={$_.blockSignature}}, `
+                                                @{Label="ConfirmCount";Expression={$_.confirmations}}, `
+
+                                                @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
+                                                @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
+                                                @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
+												
+                                                @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
+                                                @{Label="ForgerAddress";Expression={$_.generatorId}}, `
+												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
+												
+                                                @{Label="PayloadLength";Expression={$_.payloadLength}}, `
+                                                @{Label="PayloadHash";Expression={$_.payloadHash}}
+    }
+}
+
+##########################################################################################################################################################################################################
+
+<#
+.SYNOPSIS
+    Get a single block details using Previous Block ID.
+
+.DESCRIPTION
+    Return a custom object with following properties:
+
+        ID                       : ID. [String]
+
+        Version                  : Version. [Int32]
+
+        Timestamp                : Timestamp. [Int32]
+
+        Height                   : Height. [Int32]
+
+        PreviousBlockID          : Previous Block ID. [String]
+
+        Signature                : Block Signature. [String]
+
+        ConfirmCount             : Total # of block confirmation(s). [Int32]
+		
+        TransactionCount         : # of transaction(s) included in the block. [Int32]
+
+        TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
+
+        TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
+		
+        ForgerPublicKey          : Forger's Account Public Key. [String]
+
+        ForgerAddress            : Forger's Account Address. [String]
+		
+        ForgerBaseReward         : Forger's Base Reward. [Int32]
+
+        ForgerFinalReward        : Forger's Final Reward. [Int32]
+
+        PayloadLength            : Payload Length. [Int32]
+
+        PayloadHash              : Payload Hash. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER ID
+    Previous Block ID matching the requested block.
+
+.EXAMPLE
+    $BlockInfo = Get-PsArkBlockByPreviousBlockID -URL https://api.arknode.net/ -ID 443216682634022798
+
+#>
+
+Function Get-PsArkBlockByPreviousBlockID {
+
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $ID
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?previousBlock=' + $ID )
+    if( $Output.success -eq $True )
+    {
+		$Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="Timestamp";Expression={$_.timestamp}}, `
+                                                @{Label="Height";Expression={$_.height}}, `
+                                                @{Label="PreviousBlockID";Expression={$_.previousBlock}}, `
+                                                @{Label="Signature";Expression={$_.blockSignature}}, `
+                                                @{Label="ConfirmCount";Expression={$_.confirmations}}, `
+
+                                                @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
+                                                @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
+                                                @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
+												
+                                                @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
+                                                @{Label="ForgerAddress";Expression={$_.generatorId}}, `
+												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
+												
+                                                @{Label="PayloadLength";Expression={$_.payloadLength}}, `
+                                                @{Label="PayloadHash";Expression={$_.payloadHash}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -1333,24 +1557,83 @@ Response
 }
 #>
 
+<#
+.SYNOPSIS
+    Gets list of peers.
+
+.DESCRIPTION
+    Return the list of peers. [Array]
+
+    The list (array) contain custom 'Peer' object with following properties:
+
+        IP       : Requested IP. [String]
+
+        Port     : Requested Port. [Int32]
+
+        Version  : Client Version. [String]
+
+        OS       : Operating System. [String]
+
+        Height   : BlockChain Height. [Int32]
+
+        Status   : Client Status. (See note below) [String]
+
+        Delay    : (Undocumented) [Int32]
+
+
+        Status Property can have multiple values.
+
+        OK            : Normal Status.
+        EUNAVAILABLE  : Unable to connect to the remote URL.
+        ETIMEOUT      : Request has exceeded the allowed timeout
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.EXAMPLE
+    $PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
+
+#>
+
+<#
+Function Get-PsArkPeerList {
+
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers' )
+    if( $Output.success -eq $True )
+    {
+        $Output.peers | Select-Object -Property @{Label="IP";Expression={$_.ip}}, `
+                                                @{Label="Port";Expression={$_.port}}, `
+                                                @{Label="Version";Expression={$_.version}}, `
+                                                @{Label="OS";Expression={$_.os}}, `
+                                                @{Label="Height";Expression={[Int32] $_.height}}, `
+                                                @{Label="Status";Expression={$_.status}}, `
+                                                @{Label="Delay";Expression={$_.delay}}
+    }
+}
+#>
+
+# Get-PsArkBlockListByTransactionTotalAmount
+# Get-PsArkBlockListByTransactionTotalFee
+# Get-PsArkBlockListByForgerPublicKey
+
+
 Function Get-PsArkBlockList {
 
     Param(
         [parameter(Mandatory = $True)]
-    [System.String] $URI,
+        [System.String] $URL,
 
+		
         [parameter(Mandatory = $False)]
     [System.String] $TotalFee='',
 
         [parameter(Mandatory = $False)]
     [System.String] $TotalAmount='',
-
-        [parameter(Mandatory = $False)]
-    [System.String] $PreviousBlock='',
-
-        [parameter(Mandatory = $False)]
-    [System.String] $Height='',
-
         [parameter(Mandatory = $False)]
     [System.String] $GeneratorPublicKey='',
 
@@ -1413,8 +1696,8 @@ Function Get-PsArkBlockList {
       $Query += "orderBy=$OrderBy"
     }
 
-    $Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/blocks'+$Query )
-    if( $Output.success -eq $True ) { $Output.blocks }
+    #$Private:Output = Invoke-LwdApiCall -Method Get -URI $( $URI+'api/blocks'+$Query )
+    #if( $Output.success -eq $True ) { $Output.blocks }
   }
 
 }
@@ -1438,7 +1721,7 @@ Response
 
 Function Get-PsArkBlockchainTransactionFee {
 
-	# TODO
+    # TODO
 }
 
 ##########################################################################################################################################################################################################
@@ -2384,7 +2667,10 @@ Export-ModuleMember -Function Get-PsArkPeerList
 
 # Block / Blockchain #--------------------------------------------------------------
 
-#Export-ModuleMember -Function Get-PsArkBlockById
+Export-ModuleMember -Function Get-PsArkBlockById
+Export-ModuleMember -Function Get-PsArkBlockByHeight
+Export-ModuleMember -Function Get-PsArkBlockByPreviousBlockID
+
 #Export-ModuleMember -Function Get-PsArkBlockList
 #Export-ModuleMember -Function Get-PsArkBlockchainTransactionFee
 #Export-ModuleMember -Function Get-PsArkBlockchainSignatureFee
