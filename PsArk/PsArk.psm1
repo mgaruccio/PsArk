@@ -29,7 +29,7 @@ Get-PsArkBlockReceiptStatus                         Code + Help         Public
 
 # Transactions #---------------------------------------------------------------------
 
-Get-PsArkTransactionById                            Struct              Hidden
+Get-PsArkTransactionById                            Code + Help         Public
 Get-PsArkTransactionList                            Struct              Hidden
 Get-PsArkUnconfirmedTransactionById                 Struct              Hidden
 Get-PsArkUnconfirmedTransactionList                 Struct              Hidden
@@ -757,41 +757,75 @@ Function Get-PsArkBlockReceiptStatus {
 ### API Call: Transactions
 ##########################################################################################################################################################################################################
 
+<# 
+
+    Lisk Only
+
+    Signatures  :   Array of all tx signatures
+
+#>
+
+
 <#
-Get transaction
+.SYNOPSIS
+    Get information on a specific transaction
 
-Get transaction that matches the provided id.
+.DESCRIPTION
+    Returns a custom object with the following properties:
+        TransactionID     :  ID of the transaction being queried
 
-GET /api/transactions/get?id=id
+        Type              :  Type of transaction
 
-    id: String of transaction (String)
+        SenderAddress     :  Address that sent the transaction
 
-Response
+        RecipientAddress  :  Address that received the transaction
 
-{
-  "success": true,
-  "transaction": {
-    "id": "Id of transaction. String",
-    "height": "Tx blockchain height. Integer",
-    "blockId" "Tx blockId. String",
-    "type": "Type of transaction. Integer",
-    "timestamp": "Timestamp of transaction. Integer",
-    "senderPublicKey": "Sender public key of transaction. Hex",
-    "senderId": "Address of transaction sender. String",
-    "recipientId": "Recipient id of transaction. String",
-    "amount": "Amount. Integer",
-    "fee": "Fee. Integer",
-    "signature": "Signature. Hex",
-    "signatures": "Signatures. Array",
-    "confirmations": "Number of confirmations. Integer",
-    "asset": "Resources. Object"
-  }
-}
+        SenderPublicKey   :  Public Key of the transaction sender
+
+        Signature         :  Signature of the transaction
+
+        Fee               :  Transaction fee paid (currently always 10000000)
+
+        Confirmations     :  Number of times transaction has been confirmed by a delegate
+
+        BlockID           :  ID of the block in which the transaction was included
+
+        Asset             :  Object representing tx assets
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.EXAMPLE
+    Get-PsArkTransactionById -URL https://api.arknode.net/ -ID "d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228"
 #>
 
 Function Get-PsArkTransactionById {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $ID
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/get?id='+$ID )
+    if( $Output.success -eq $True )
+    {
+        $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}
+                                                       
+                                                       
+                                           
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -2651,7 +2685,7 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 
 # Transactions #---------------------------------------------------------------------
 
-#Export-ModuleMember -Function Get-PsArkTransactionById
+Export-ModuleMember -Function Get-PsArkTransactionById
 #Export-ModuleMember -Function Get-PsArkTransactionList
 #Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionById
 #Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
