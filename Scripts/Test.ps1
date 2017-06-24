@@ -2,7 +2,7 @@
 
 Version :   0.1.0.0
 Author  :   Gr33nDrag0n
-History :   2017/05/14 - Release v0.1.0.0
+History :   2017/06/24 - Release v0.1.0.0
             2017/04/20 - Creation of the script.
 
 ##########################################################################################################################################>
@@ -141,7 +141,11 @@ if( ( $Test -eq 'ALL' ) -or ( $Test -eq 'Transaction' ) )
     Write-Host '##### API Call: TRANSACTION ####################################################' -Foreground Yellow
     Write-Host ''
 
-    #Get-PsArkTransactionById
+    Write-Host "Command: Get-PsArkTransactionById -URL $($MyConfig.Servers[0]) -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228" -Foreground Cyan
+    $TransactionInfo = Get-PsArkTransactionById -URL $MyConfig.Servers[0] -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
+    #$TransactionInfo | Get-Member | Where-Object { $_.MemberType -eq 'NoteProperty' } | Select-Object -Property Name, Definition | Format-Table
+    $TransactionInfo | FL *
+
     #Get-PsArkTransactionList
     #Get-PsArkUnconfirmedTransactionById
     #Get-PsArkUnconfirmedTransactionList

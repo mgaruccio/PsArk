@@ -758,45 +758,43 @@ Function Get-PsArkBlockReceiptStatus {
 ##########################################################################################################################################################################################################
 
 <# 
-
     Lisk Only
 
     Signatures  :   Array of all tx signatures
-
 #>
-
 
 <#
 .SYNOPSIS
-    Get information on a specific transaction
+    Get information on a specific transaction.
 
 .DESCRIPTION
     Returns a custom object with the following properties:
-        TransactionID     :  ID of the transaction being queried
+    
+        TransactionID     : ID of the transaction being queried. [String]
 
-        Type              :  Type of transaction
+        Type              : Type of transaction. [Int32]
 
-        SenderAddress     :  Address that sent the transaction
+        SenderAddress     : Address that sent the transaction. [String]
 
-        RecipientAddress  :  Address that received the transaction
+        RecipientAddress  : Address that received the transaction. [String]
 
-        SenderPublicKey   :  Public Key of the transaction sender
+        SenderPublicKey   : Public Key of the transaction sender. [String]
 
-        Signature         :  Signature of the transaction
+        Signature         : Signature of the transaction. [String]
 
-        Fee               :  Transaction fee paid (currently always 10000000)
+        Fee               : Transaction fee paid. [Int32]
 
-        Confirmations     :  Number of times transaction has been confirmed by a delegate
+        Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
 
-        BlockID           :  ID of the block in which the transaction was included
+        BlockID           : ID of the block in which the transaction was included. [String]
 
-        Asset             :  Object representing tx assets
+        Asset             : Object representing tx assets. [PSCustomObject]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
 
 .EXAMPLE
-    Get-PsArkTransactionById -URL https://api.arknode.net/ -ID "d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228"
+    Get-PsArkTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
 #>
 
 Function Get-PsArkTransactionById {
@@ -822,9 +820,6 @@ Function Get-PsArkTransactionById {
                                                        @{label="Confirmations";Expression={$_.confirmations}}, `
                                                        @{Label="BlockID";Expression={$_.blockId}}, `
                                                        @{Label="Asset";Expression={$_.asset}}
-                                                       
-                                                       
-                                           
     }
 }
 
@@ -1319,17 +1314,17 @@ Function Get-PsArkPeerVersion {
         Signature                : Block Signature. [String]
 
         ConfirmCount             : Total # of block confirmation(s). [Int32]
-		
+        
         TransactionCount         : # of transaction(s) included in the block. [Int32]
 
         TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
 
         TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
-		
+        
         ForgerPublicKey          : Forger's Account Public Key. [String]
 
         ForgerAddress            : Forger's Account Address. [String]
-		
+        
         ForgerBaseReward         : Forger's Base Reward. [Int32]
 
         ForgerFinalReward        : Forger's Final Reward. [Int32]
@@ -1373,12 +1368,12 @@ Function Get-PsArkBlockByID {
                                                 @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
                                                 @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
                                                 @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
-												
+                                                
                                                 @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
                                                 @{Label="ForgerAddress";Expression={$_.generatorId}}, `
-												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerBaseReward";Expression={$_.reward}}, `
                                                 @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
-												
+                                                
                                                 @{Label="PayloadLength";Expression={$_.payloadLength}}, `
                                                 @{Label="PayloadHash";Expression={$_.payloadHash}}
     }
@@ -1406,17 +1401,17 @@ Function Get-PsArkBlockByID {
         Signature                : Block Signature. [String]
 
         ConfirmCount             : Total # of block confirmation(s). [Int32]
-		
+        
         TransactionCount         : # of transaction(s) included in the block. [Int32]
 
         TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
 
         TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
-		
+        
         ForgerPublicKey          : Forger's Account Public Key. [String]
 
         ForgerAddress            : Forger's Account Address. [String]
-		
+        
         ForgerBaseReward         : Forger's Base Reward. [Int32]
 
         ForgerFinalReward        : Forger's Final Reward. [Int32]
@@ -1449,7 +1444,7 @@ Function Get-PsArkBlockByHeight {
     $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?height=' + $Height )
     if( $Output.success -eq $True )
     {
-		$Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
+        $Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
                                                 @{Label="Version";Expression={$_.version}}, `
                                                 @{Label="Timestamp";Expression={$_.timestamp}}, `
                                                 @{Label="Height";Expression={$_.height}}, `
@@ -1460,12 +1455,12 @@ Function Get-PsArkBlockByHeight {
                                                 @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
                                                 @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
                                                 @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
-												
+                                                
                                                 @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
                                                 @{Label="ForgerAddress";Expression={$_.generatorId}}, `
-												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerBaseReward";Expression={$_.reward}}, `
                                                 @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
-												
+                                                
                                                 @{Label="PayloadLength";Expression={$_.payloadLength}}, `
                                                 @{Label="PayloadHash";Expression={$_.payloadHash}}
     }
@@ -1493,17 +1488,17 @@ Function Get-PsArkBlockByHeight {
         Signature                : Block Signature. [String]
 
         ConfirmCount             : Total # of block confirmation(s). [Int32]
-		
+        
         TransactionCount         : # of transaction(s) included in the block. [Int32]
 
         TransactionTotalAmount   : Included Transaction(s) Total Amount. [Int32]
 
         TransactionTotalFee      : Included Transaction(s) Total Fee. [Int32]
-		
+        
         ForgerPublicKey          : Forger's Account Public Key. [String]
 
         ForgerAddress            : Forger's Account Address. [String]
-		
+        
         ForgerBaseReward         : Forger's Base Reward. [Int32]
 
         ForgerFinalReward        : Forger's Final Reward. [Int32]
@@ -1536,7 +1531,7 @@ Function Get-PsArkBlockByPreviousBlockID {
     $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?previousBlock=' + $ID )
     if( $Output.success -eq $True )
     {
-		$Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
+        $Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
                                                 @{Label="Version";Expression={$_.version}}, `
                                                 @{Label="Timestamp";Expression={$_.timestamp}}, `
                                                 @{Label="Height";Expression={$_.height}}, `
@@ -1547,12 +1542,12 @@ Function Get-PsArkBlockByPreviousBlockID {
                                                 @{Label="TransactionCount";Expression={$_.numberOfTransactions}}, `
                                                 @{Label="TransactionTotalAmount";Expression={$_.totalAmount}}, `
                                                 @{Label="TransactionTotalFee";Expression={$_.totalFee}}, `
-												
+                                                
                                                 @{Label="ForgerPublicKey";Expression={$_.generatorPublicKey}}, `
                                                 @{Label="ForgerAddress";Expression={$_.generatorId}}, `
-												@{Label="ForgerBaseReward";Expression={$_.reward}}, `
+                                                @{Label="ForgerBaseReward";Expression={$_.reward}}, `
                                                 @{Label="ForgerFinalReward";Expression={$_.totalForged}}, `
-												
+                                                
                                                 @{Label="PayloadLength";Expression={$_.payloadLength}}, `
                                                 @{Label="PayloadHash";Expression={$_.payloadHash}}
     }
@@ -1662,7 +1657,7 @@ Function Get-PsArkBlockList {
         [parameter(Mandatory = $True)]
         [System.String] $URL,
 
-		
+        
         [parameter(Mandatory = $False)]
     [System.String] $TotalFee='',
 
