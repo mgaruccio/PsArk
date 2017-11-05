@@ -4,7 +4,7 @@
 
 All-in-one module to access all Ark network functions using PowerShell in Windows 7, 8, 10 and Windows Server 2008R2, 2012, 2016. This module will include integrated Help and Examples in v1.0.  It's a "Work In Progress" toward v1.0. It's very incomplete compared to full Ark API possibilities ...
 
-To support development, vote gr33ndrag0n on Ark network for Delegate or become a sponsor on my website.
+To support development, send donations to gr33ndrag0n / AUf8qWdgywo9c8P5oD48bz3Dv7ZK5K2giX on Ark network.
 
 Visit [Ark.io](https://www.ark.io) for official Ark related stuff ...
 
