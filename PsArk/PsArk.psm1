@@ -1,6 +1,6 @@
 <##########################################################################################################################################
 
-Version :   0.1.0.0
+Version :   0.2.0.0
 Author  :   Gr33nDrag0n
 History :   2017/05/14 - Release v0.1.0.0
             2017/04/20 - Creation of the module.
@@ -30,8 +30,8 @@ Get-PsArkBlockReceiptStatus                         Code + Help         Public
 # Transactions #---------------------------------------------------------------------
 
 Get-PsArkTransactionById                            Code + Help         Public
-Get-PsArkTransactionList                            Struct              Hidden
-Get-PsArkUnconfirmedTransactionById                 Struct              Hidden
+Get-PsArkTransactionList                            Code + Help         Public
+Get-PsArkUnconfirmedTransactionById                 Code + Help         Public
 Get-PsArkUnconfirmedTransactionList                 Struct              Hidden
 Get-PsArkQueuedTransactionById                      Struct              Hidden
 Get-PsArkQueuedTransactionList                      Struct              Hidden
@@ -99,7 +99,7 @@ Export-PsArkJson
 
 ##########################################################################################################################################>
 
-$Script:PsArk_Version = 'v0.1.0.0'
+$Script:PsArk_Version = 'v0.2.0.0'
 
 
 ##########################################################################################################################################################################################################
@@ -757,12 +757,6 @@ Function Get-PsArkBlockReceiptStatus {
 ### API Call: Transactions
 ##########################################################################################################################################################################################################
 
-<# 
-    Lisk Only
-
-    Signatures  :   Array of all tx signatures
-#>
-
 <#
 .SYNOPSIS
     Get information on a specific transaction.
@@ -782,6 +776,8 @@ Function Get-PsArkBlockReceiptStatus {
 
         Signature         : Signature of the transaction. [String]
 
+        Amount            : Amount of Ark transferred
+
         Fee               : Transaction fee paid. [Int32]
 
         Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
@@ -789,6 +785,8 @@ Function Get-PsArkBlockReceiptStatus {
         BlockID           : ID of the block in which the transaction was included. [String]
 
         Asset             : Object representing tx assets. [PSCustomObject]
+
+        Timestamp         : Integer timestamp of transaction. [Int32]
 
 .PARAMETER URL
     Address of the target full node server processing the API query.
@@ -816,177 +814,416 @@ Function Get-PsArkTransactionById {
                                                        @{Label="RecipientAddress";Expression={$_.recipientId}}, `
                                                        @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
                                                        @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Amount";Expression={$_.amount}}, `
                                                        @{Label="Fee";Expression={$_.fee}}, `
                                                        @{label="Confirmations";Expression={$_.confirmations}}, `
                                                        @{Label="BlockID";Expression={$_.blockId}}, `
-                                                       @{Label="Asset";Expression={$_.asset}}
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
     }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get list of transactions
-
-List of transactions matched by provided parameters.
-
-GET /api/transactions?blockId=blockId&senderId=senderId&recipientId=recipientId&limit=limit&offset=offset&orderBy=field
-
-    blockId: Block id of transaction. (String)
-    senderId: Sender address of transaction. (String)
-    recipientId: Recipient of transaction. (String)
-    limit: Limit of transaction to send in response. Default is 20. (Number)
-    offset: Offset to load. (Integer number)
-    orderBy: Name of column to order. After column name must go "desc" or "asc" to choose order type, prefix for column name is t_. Example: orderBy=t_timestamp:desc (String)
-
-All parameters join by "OR" by default, to join with "AND" specify AND: in front of the parameter.
-
-Example:
-/api/transactions?blockId=10910396031294105665&senderId=6881298120989278452L&orderBy=timestamp:desc looks like: blockId=10910396031294105665 OR senderId=6881298120989278452L
-
-Response
-
-{
-  "success": true,
-  "transactions": [
-    "list of transactions objects"
-  ]
-}
-
-Example - blockId
-
-curl -k -X GET http://localhost:8000/api/transactions?blockId=<blockId>
-
-Example - senderId
-
-curl -k -X GET http://localhost:8000/api/transactions?senderId=<senderId>
-
-Example - recipientId
-
-curl -k -X GET http://localhost:8000/api/transactions?recipientId=<recipientId>
+    Lisk seems to be idential here
 #>
 
-Function Get-PsArkTransactionList {
+<#
+    .SYNOPSIS
+        Get a list of transactions that match a specific parameter.
 
-    # TODO
+    .DESCRIPTION
+        Returns an array of custom objects with the following properties:
+        
+            TransactionID     : ID of the transaction being queried. [String]
+
+            Type              : Type of transaction. [Int32]
+
+            SenderAddress     : Address that sent the transaction. [String]
+
+            RecipientAddress  : Address that received the transaction. [String]
+
+            SenderPublicKey   : Public Key of the transaction sender. [String]
+
+            Signature         : Signature of the transaction. [String]
+
+            Fee               : Transaction fee paid. [Int32]
+
+            Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
+
+            BlockID           : ID of the block in which the transaction was included. [String]
+
+            Asset             : Object representing tx assets. [PSCustomObject]
+
+            Timestamp         : Integer timestamp of transaction. [Int32]
+
+    .PARAMETER URL
+        Address of the target full node server processing the API query.
+
+    .PARAMETER BlockId
+        Id of the block you would like to search for transactions.
+
+    .PARAMETER SenderId
+        Address of the sender account to search for related transactions.
+
+    .PARAMETER RecipientId
+        Address of the recipient account to search for transactions
+
+    .PARAMETER Offset
+        Offset of the transaction to search for
+
+    .PARAMETER ResultSetSize
+        Number of transactions to return, defaults to 20
+
+    .PARAMETER MatchAllParameters
+        Require all parameters to be matched to return a transaction
+
+    .PARAMETER SortBy
+        Choose a parameter to sort the transactions on
+
+    .PARAMETER SortOrder
+        sort order, valid options are: asc,desc
+
+    .EXAMPLE
+       Get-PsArkTransactionList -URL https://api.arknode.net/ -SenderId AUexKjGtgsSpVzPLs6jNMM6vJ6znEVTQWK -ResultSetSize 2
+#>
+Function Get-PsArkTransactionList {
+    Param(
+        
+        [Parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [Parameter(Mandatory = $False)]
+        [System.String]$BlockId,
+
+        [Parameter(Mandatory = $False)]
+        [System.String]$SenderId,
+
+        [Parameter(Mandatory = $False)]
+        [System.String]$RecipientId,
+
+        [Parameter(Mandatory = $False)]
+        [System.Int32]$Offset,
+
+        [Parameter(Mandatory = $False)]
+        [System.Int32]$ResultSetSize,
+
+        [Parameter(Mandatory = $False)]
+        [Switch]$MatchAllParameters,
+
+        [Parameter(Mandatory = $False)]
+        [ValidateSet("transactionId","type","senderAddress","recipientAddress","senderPublicKey","signature","fee","confirmations","blockId","asset","timestamp")]
+        [System.String]$SortBy = "timestamp",
+
+        [Parameter(Mandatory = $False)]
+        [ValidateSet("asc","desc")]
+        [System.string]$SortOrder = "desc"
+        )
+
+    #Helper function create new query with valid seach params
+    
+    $Query = "api/transactions?"
+
+    if($BlockId) {
+        $Query = Edit-PsArkQuery -Query $Query -NewItem 'BlockId' -NewValue $BlockId
+    }
+
+    if($SenderId) {
+        $Query = Edit-PsArkQuery -Query $Query -NewItem 'SenderId' -NewValue $SenderId
+    }
+
+    if($RecipientId) {
+        $Query = Edit-PsArkQuery -Query $Query -NewItem 'RecipientId' -NewValue $RecipientId
+    }
+
+    if($Offset) {
+        $Query = Edit-PsArkQuery -Query $Query -NewItem 'SenderId' -NewValue $Offset
+    }
+
+    if($ResultSetSize) {
+        $Query += "&limit=$($ResultSetSize)"
+    }
+
+    $Query += "&orderBy=$($SortBy)" + ":" + $SortOrder
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+$Query )
+
+    $Output.transactions | ForEach-Object {$_ | Select-Object -Property @{Label="TransactionID";Expression={$_.ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Amount";Expression={$_.amount}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+                                          }
+    
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get unconfirmed transaction
+.SYNOPSIS
+    Get information on a specific unconfirmed transaction.
 
-Get unconfirmed transaction that matches the provided id.
+.DESCRIPTION
+    Returns a custom object with the following properties:
+    
+        TransactionID     : ID of the transaction being queried. [String]
 
-GET /api/transactions/unconfirmed/get?id=id
+        Type              : Type of transaction. [Int32]
 
-    id: String of transaction (String)
+        SenderAddress     : Address that sent the transaction. [String]
 
-Response
+        RecipientAddress  : Address that received the transaction. [String]
 
-{
-  "success": true,
-  "transaction": {
-    "type": "Type of transaction. Integer",
-    "amount": "Amount. Integer",
-    "senderPublicKey": "Sender public key of transaction. Hex",
-    "timestamp": "Timestamp of transaction. Integer",
-    "asset": "Resources. Object"
-    "recipientId": "Recipient id of transaction. String",
-    "signature": "Signature. Hex",
-    "id": "Id of transaction. String",
-    "fee": "Fee. Integer",
-    "senderId": "Address of transaction sender. String",
-    "relays": "Propagation. Integer",
-    "receivedAt": "Timestamp. String"
-  }
-}
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        Fee               : Transaction fee paid. [Int32]
+
+        Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
+
+        BlockID           : ID of the block in which the transaction was included. [String]
+
+        Asset             : Object representing tx assets. [PSCustomObject]
+
+        Timestamp         : Integer timestamp of transaction. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER ID 
+    ID of the transaction to get information on
+
+.EXAMPLE
+    Get-PsArkUnconfirmedTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
 #>
 
 Function Get-PsArkUnconfirmedTransactionById {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $ID
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/unconfirmed/get?id='+$ID )
+    if( $Output.success -eq $True )
+    {
+        $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$_.ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Amount";Expression={$_.amount}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get list of unconfirmed transactions
+.SYNOPSIS
+    Get a list of unconfirmed transactions.
 
-Gets a list of unconfirmed transactions.
+.DESCRIPTION
+    Returns an array of custom objects with the following properties:
+    
+        TransactionID     : ID of the transaction being queried. [String]
 
-GET /api/transactions/unconfirmed
+        Type              : Type of transaction. [Int32]
 
-Response
+        SenderAddress     : Address that sent the transaction. [String]
 
-{
-    "success" : true,
-    "transactions" : [list of transaction objects]
-}
+        RecipientAddress  : Address that received the transaction. [String]
+
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        Fee               : Transaction fee paid. [Int32]
+
+        Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
+
+        BlockID           : ID of the block in which the transaction was included. [String]
+
+        Asset             : Object representing tx assets. [PSCustomObject]
+
+        Timestamp         : Integer timestamp of transaction. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.EXAMPLE
+    Get-PsArkUnconfirmedTransactionList -URL https://api.arknode.net/
 #>
 
 Function Get-PsArkUnconfirmedTransactionList {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL        
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/unconfirmed' )
+    if( $Output.success -eq $True )
+    {
+        $Output.transactions | Select-Object -Property @{Label="TransactionID";Expression={$_.ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Amount";Expression={$_.amount}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get specific queued transaction
+.SYNOPSIS
+    Get information on a specific queued transaction.
 
-Get queued transaction that matches the provided id.
+.DESCRIPTION
+    Returns a custom object with the following properties:
+    
+        TransactionID     : ID of the transaction being queried. [String]
 
-GET /api/transactions/queued/get?id=id
+        Type              : Type of transaction. [Int32]
 
-    id: String of transaction (String)
+        SenderAddress     : Address that sent the transaction. [String]
 
-Response
+        RecipientAddress  : Address that received the transaction. [String]
 
-{
-  "success": true,
-  "transaction": {
-    "id": "Id of transaction. String",
-    "type": "Type of transaction. Integer",
-    "subtype": "Subtype of transaction. Integer",
-    "timestamp": "Timestamp of transaction. Integer",
-    "senderPublicKey": "Sender public key of transaction. Hex",
-    "senderId": "Address of transaction sender. String",
-    "recipientId": "Recipient id of transaction. String",
-    "amount": "Amount. Integer",
-    "fee": "Fee. Integer",
-    "signature": "Signature. Hex",
-    "signSignature": "Second signature. Hex",
-    "confirmations": "Number of confirmations. Integer"
-  }
-}
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        Fee               : Transaction fee paid. [Int32]
+
+        Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
+
+        BlockID           : ID of the block in which the transaction was included. [String]
+
+        Asset             : Object representing tx assets. [PSCustomObject]
+
+        Timestamp         : Integer timestamp of transaction. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.PARAMETER ID 
+    ID of the transaction to get information on
+
+.EXAMPLE
+    Get-PsArkQueuedTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
 #>
 
 Function Get-PsArkQueuedTransactionById {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL,
+
+        [parameter(Mandatory = $True)]
+        [System.String] $ID
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/queued/get?id='+$ID )
+    if( $Output.success -eq $True )
+    {
+        $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+    }
 }
 
 ##########################################################################################################################################################################################################
 
 <#
-Get list of queued transactions
+.SYNOPSIS
+    Get a list of queued transactions.
 
-Gets a list of queued transactions.
+.DESCRIPTION
+    Returns an array of custom objects with the following properties:
+    
+        TransactionID     : ID of the transaction being queried. [String]
 
-GET /api/transactions/queued
+        Type              : Type of transaction. [Int32]
 
-Response
+        SenderAddress     : Address that sent the transaction. [String]
 
-{
-    "success" : true,
-    "transactions" : [list of transaction objects]
-}
+        RecipientAddress  : Address that received the transaction. [String]
+
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        Fee               : Transaction fee paid. [Int32]
+
+        Confirmations     : Number of times transaction has been confirmed by a delegate. [Int32]
+
+        BlockID           : ID of the block in which the transaction was included. [String]
+
+        Asset             : Object representing tx assets. [PSCustomObject]
+
+        Timestamp         : Integer timestamp of transaction. [Int32]
+
+.PARAMETER URL
+    Address of the target full node server processing the API query.
+
+.EXAMPLE
+    Get-PsArkUnconfirmedTransactionList -URL https://api.arknode.net/
 #>
 
 Function Get-PsArkQueuedTransactionList {
 
-    # TODO
+    Param(
+        [parameter(Mandatory = $True)]
+        [System.String] $URL        
+        )
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/queued' )
+    if( $Output.success -eq $True )
+    {
+        $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
+                                                       @{Label="Type";Expression={$_.type}}, `
+                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                       @{Label="Signature";Expression={$_.signature}}, `
+                                                       @{Label="Fee";Expression={$_.fee}}, `
+                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                       @{Label="BlockID";Expression={$_.blockId}}, `
+                                                       @{Label="Asset";Expression={$_.asset}}, `
+                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+    }
 }
 
 ##########################################################################################################################################################################################################
@@ -1152,6 +1389,7 @@ Function Get-PsArkPeer {
         )
 
     $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/get?ip=' + $IP + '&port=' + $Port )
+
     if( $Output.success -eq $True )
     {
         $Output.peer | Select-Object -Property  @{Label="IP";Expression={$IP}}, `
@@ -2588,7 +2826,6 @@ Function Invoke-PsArkApiCall {
         Try { $Private:WebRequest = Invoke-WebRequest -UseBasicParsing -URI $URL -Method $Method -Body $Body }
         Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
     }
-
     if( ( $WebRequest.StatusCode -eq 200 ) -and ( $WebRequest.StatusDescription -eq 'OK' ) )
     {
         $Private:Result = $WebRequest | ConvertFrom-Json
@@ -2653,6 +2890,18 @@ Function ConvertFrom-PsArkBase64 {
 
 ##########################################################################################################################################################################################################
 
+Function Edit-PsArkQuery($Query, $NewItem, $NewValue) {
+        
+        if($Query.substring($Query.length - 1) -and ($Query[-1] -ne "?")) {
+            $Query += "&"
+        } elseif($MatchAllParameters) {
+            Return $($Query) + "AND:" + $($NewItem) + "=" + $NewValue
+        } else {
+            Return $($Query) + $($NewItem) + "=" + $NewValue
+        }
+    }
+
+##########################################################################################################################################################################################################
 
 ##### Export Public Functions #####
 
@@ -2681,9 +2930,9 @@ Export-ModuleMember -Function Get-PsArkBlockReceiptStatus
 # Transactions #---------------------------------------------------------------------
 
 Export-ModuleMember -Function Get-PsArkTransactionById
-#Export-ModuleMember -Function Get-PsArkTransactionList
-#Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionById
-#Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
+Export-ModuleMember -Function Get-PsArkTransactionList
+Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionById
+Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionById
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionList
 
