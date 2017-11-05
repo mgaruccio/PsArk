@@ -100,6 +100,7 @@ Export-PsArkJson
 ##########################################################################################################################################>
 
 $Script:PsArk_Version = 'v0.2.0.0'
+$Script:Network_Data = Get-Content "$($PsScriptroot)\Resources\NetWorkInfo.json" | ConvertFrom-Json
 
 
 ##########################################################################################################################################################################################################
@@ -1528,6 +1529,21 @@ Function Get-PsArkPeerVersion {
 
 #>
 
+Function Find-PsArkPeer {
+    Param(
+        [ValidateSet("DevNet","MainNet")]
+            [System.String]$Network
+    )
+
+    $Selectednetwork = $Script:Network_Data.$Network
+
+    $InitialSeed = Get-Random -InputObject $Selectednetwork.peers
+    Write-Host "$InitialSeed/"
+
+    Return Get-PsArkPeerList -URL "$InitialSeed/" | Get-Random
+    
+}
+
 ##########################################################################################################################################################################################################
 ### API Call: Block / Blockchain
 ##########################################################################################################################################################################################################
@@ -2634,7 +2650,7 @@ Function Disable-PsArkDelegateForging {
   $Private:Output = Invoke-LwdApiCall -Method Post -URI $( $URI+'api/delegates/forging/disable' ) -Body @{secret=$Secret}
 
   Write-Host "DEBUG | Disable-LwdDelegateForging"
-  Write-Host ( $Output | FL * | Out-String )
+  Write-Host ( $Output | Format-List * | Out-String )
 
   if( $Output.success -eq $True )
   {

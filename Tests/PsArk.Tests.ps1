@@ -395,4 +395,20 @@ InModuleScope PsArk {
         }
     }
 
+    Describe "Find-PsArkPeer" {
+        $SamplePeerList = Import-Clixml ".\Tests\SampleObjects\PeerList.xml"
+        
+        Mock Get-PsArkPeerList {Return $SamplePeerList} -ModuleName "PsArk" -Verifiable -ParameterFilter {($URL -like "*.*.*.*:4002/")}
+
+        $NewPeer = Find-PsArkPeer -Network "Devnet"
+
+        It "Queries PsArkPeerList and Peer endpoints to get a currently working api end point" {
+            Assert-VerifiableMocks
+        }
+        It "Returns a peer" {
+            $NewPeer.Port | Should Be 4002
+            $Newpeer.Version | Should BeLike "1.*.*"
+        }
+    }
+
 }
