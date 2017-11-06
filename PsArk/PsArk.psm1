@@ -36,6 +36,7 @@ Get-PsArkUnconfirmedTransactionList                 Struct              Hidden
 Get-PsArkQueuedTransactionById                      Struct              Hidden
 Get-PsArkQueuedTransactionList                      Struct              Hidden
 
+Create-PsArkTransaction                             Code + Help         Public
 Send-PsArkTransaction                               Struct              Hidden
 
 # Peers #----------------------------------------------------------------------------
@@ -1228,6 +1229,82 @@ Function Get-PsArkQueuedTransactionList {
 }
 
 ##########################################################################################################################################################################################################
+
+<#
+.SYNOPSIS
+    Create a new signed transaction on the selected Ark Network
+.DESCRIPTION
+    Returns a custom object with the following properties:
+        id                : ID of the transaction being queried. [String]
+
+        type              : Type of transaction. [Int32]
+
+        recipientId       : Address that received the transaction. [String]
+
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        fee               : Transaction fee paid. [Int32]
+
+        asset             : Object representing tx assets. [PSCustomObject]
+
+        timestamp         : Integer timestamp of transaction. [Int32]
+
+        vendorField       : String to be sent as the vendorfield [string]
+
+        amount            : Integer representing the "satoshi" amount of ark to send
+.PARAMETER RecipientId
+    String representing the address of the wallet to which ARK is being sent
+.PARAMETER SatoshiAmount
+    Long Int representing the "satoshi" value of the ARK to be sent
+.PARAMETER PassPhrase
+    11 word passphrase for sending wallet
+.PARAMETER Fee
+    Long Int representing the "satoshi" value of the transaction fee to be paid
+.PARAMETER Type
+    Byte value representing the type of transaction to be sent, currently only type 0 implemented
+.PARAMETER Asset
+    Asset object to be sent with transaction, not currently implemented
+.PARAMETER Network
+    String representing the network that should be used for the transaction, currently only MAINET and DEVNET implemented
+.EXAMPLE
+    Create-PsArkTransaction -RecipientId "DHytfsYZtpJeiNTBuysm4eP41dSwpieFY2" -SatoshiAmount 1100000000 -VendorField "Testing PsArk" -PassPhrase "11 word passphrase" -Fee 10000000 -Network "Devnet" -type 0
+#>
+Function Create-PsArkTransaction {
+    [cmdletbinding()]
+        param(
+            [string]$RecipientId,        
+            [long]$SatoshiAmount,
+            [string]$VendorField,
+            [string]$PassPhrase,
+            [long]$Fee = 10000000,
+            [byte]$Type,
+            [PSCustomObject]$Asset,
+            [ValidateSet("MainNet","Devnet")]
+              [string]$NetWork
+        )
+    
+    $Transaction = [ordered]@{
+        id = ""
+        timestamp = Get-PsArkTimeStamp
+        recipientId = $RecipientId
+        amount = $SatoshiAmount
+        fee = $Fee
+        type = [byte]0   #Right now only supporting type 0 tx's will expand to support other typles later
+        vendorField = $VendorField
+        signature = ""
+        senderPublicKey = [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData((Get-PsArkKey -PassPhrase $passphrase).PubKey.toBytes())
+    }
+    
+    if($Asset) {
+        $Transaction.asset = $Asset
+    }
+
+    $Transaction = Sign-PsArkTransaction -Transaction $Transaction -passphrase $PassPhrase
+    $Transaction.Id = Get-PsArkTransactionId -Transaction $Transaction
+    Return $Transaction
+}
 
 <#
 Send transaction
@@ -2952,6 +3029,7 @@ Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionById
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionList
 
+Export-ModuleMember -Function Create-PsArkTransaction
 #Export-ModuleMember -Function Send-PsArkTransaction
 
 # Peers #----------------------------------------------------------------------------
