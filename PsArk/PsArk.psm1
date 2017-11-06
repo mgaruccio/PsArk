@@ -102,6 +102,7 @@ Export-PsArkJson
 
 $Script:PsArk_Version = 'v0.2.0.0'
 $Script:Network_Data = Get-Content "$($PsScriptroot)\Resources\NetWorkInfo.json" | ConvertFrom-Json
+Import-Module "$($PsScriptroot)\Resources\nbitcoin.dll"
 
 
 ##########################################################################################################################################################################################################
@@ -1294,7 +1295,7 @@ Function Create-PsArkTransaction {
         type = [byte]0   #Right now only supporting type 0 tx's will expand to support other typles later
         vendorField = $VendorField
         signature = ""
-        senderPublicKey = [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData((Get-PsArkKey -PassPhrase $passphrase).PubKey.toBytes())
+        senderPublicKey = Get-PsArkPublicKey -PassPhrase $PassPhrase
     }
     
     if($Asset) {
@@ -2996,6 +2997,116 @@ Function Edit-PsArkQuery($Query, $NewItem, $NewValue) {
 
 ##########################################################################################################################################################################################################
 
+Function Get-PsArkTimeStamp {
+    $Begin = [datetime]::new(2017, 3, 21, 13, 00, 0, [System.DateTimeKind]::Utc)
+    $Time = [System.Convert]::ToInt32(([datetime]::UtcNow - $Begin).TotalMilliseconds / 1000)
+    Return $Time
+}
+#########################################################################################################################################################################################################
+
+Function Get-PsArkKey ($PassPhrase) {
+    $SHA256 = [System.Security.Cryptography.SHA256]::Create()
+    $PassBytes = [System.Text.Encoding]::ASCII.GetBytes($PassPhrase)
+    $Hash = $SHA256.ComputeHash($PassBytes)
+    $Key = [NBitcoin.Key]::new($Hash)
+    Return $Key
+}
+#########################################################################################################################################################################################################
+function Get-PsArkTransactionBytes ($Transaction) {
+    
+    $timestampInt = [System.Decimal]::ToInt32($transaction.TimeStamp)
+    $timeStampBytes = [System.BitConverter]::GetBytes($timestampInt)
+    [int]$arrayLength = 1   #this tracks teh position of the byte array and works around the lack of a bytebuffer
+
+    $publicKeyBytes = [NBitcoin.DataEncoders.Encoders]::Hex.DecodeData($transaction.senderPublicKey)
+    $arrayLength += $publicKeyBytes.length
+
+    $arrayLength += $timeStampBytes.length
+    
+    $RecipientBytes = [NBitcoin.DataEncoders.Encoders]::Base58Check.DecodeData($transaction.RecipientId)
+    $arrayLength += $RecipientBytes.length
+
+    if($transaction.vendorField) {
+        $Vendorbytes = [System.Text.Encoding]::ASCII.GetBytes($transaction.vendorField)
+        if($Vendorbytes.Length -lt 65) {
+            $VBytes = [System.Byte[]]::CreateInstance([System.Byte], 64)
+            $Vendorbytes.CopyTo($VBytes,0)
+        }
+    } else {
+        $VBytes = [System.Byte[]]::CreateInstance([System.Byte], 64)
+    }
+    $arrayLength += $VBytes.length
+
+    $Amount = [System.BitConverter]::GetBytes($transaction.Amount)
+    $arrayLength += $Amount.length
+    $TXFee = [System.BitConverter]::GetBytes($transaction.Fee)
+    $arrayLength += $TXFee.length
+
+    if($Transaction.Signature -ne $null) {
+        $Signature = [NBitcoin.DataEncoders.Encoders]::Hex.DecodeData($Transaction.Signature)
+        
+    } else {
+        $Signature = $null
+    }
+    $arrayLength += $Signature.length    
+    
+    $i = 0
+
+    $Bytes = [System.Byte[]]::CreateInstance([System.Byte], ($arrayLength))
+    $Bytes.SetValue($Transaction.Type, $i)
+    $i += 1
+    
+    $timeStampBytes.CopyTo($Bytes,$i)
+    $i += $timeStampBytes.Length
+
+    $publicKeyBytes.CopyTo($Bytes,$i)
+    $i += $publicKeyBytes.Length
+
+    $RecipientBytes.CopyTo($Bytes,$i)
+    $i += $RecipientBytes.Length
+
+    $VBytes.CopyTo($Bytes,$i)
+    $i += $VBytes.Length
+    
+    $Amount.CopyTo($Bytes,$i)
+    $i += $Amount.length
+    
+    $TXFee.CopyTo($Bytes,$i)
+    $i += $TXFee.Length
+
+    $Signature.CopyTo($Bytes,$i)
+    $i += $Signature.Length
+    
+    return $Bytes
+}
+#########################################################################################################################################################################################################
+
+Function Sign-PsArkTransaction ($Transaction, $PassPhrase){
+    
+    $Bytes = Get-PsArkTransactionBytes -Transaction $transaction
+
+    $keys = Get-PsArkKey $passphrase
+    $SHA256 = [System.Security.Cryptography.SHA256]::Create()
+    $hash = $SHA256.ComputeHash($Bytes)
+    $Uhash = [NBitcoin.uint256]::new($hash)
+    $signature = $keys.Sign($Uhash)
+    $signature = $signature.ToDER()
+    $signature = [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData($signature)
+    $transaction.signature = $signature
+    Return $transaction
+}
+#########################################################################################################################################################################################################
+
+Function Get-PsArkTransactionId ($Transaction){
+    $SHA256 = [System.Security.Cryptography.SHA256]::Create()
+    $TXBytes = Get-PsArkTransactionBytes -Transaction $Transaction
+    $Hash = $SHA256.ComputeHash($TXBytes)
+    [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData($Hash)
+}
+#########################################################################################################################################################################################################
+Function Get-PsArkPublicKey ($PassPhrase) {
+    Return [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData((Get-PsArkKey -PassPhrase $passphrase).PubKey.toBytes())
+}
 ##### Export Public Functions #####
 
 #### API ############################################################################
