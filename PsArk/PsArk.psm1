@@ -100,7 +100,7 @@ Export-PsArkJson
 
 ##########################################################################################################################################>
 
-$Script:PsArk_Version = 'v0.2.0.0'
+$Script:PsArk_Version = "1.1.1"
 $Script:Network_Data = Get-Content "$($PsScriptroot)\Resources\NetWorkInfo.json" | ConvertFrom-Json
 Import-Module "$($PsScriptroot)\Resources\nbitcoin.dll"
 
@@ -1231,81 +1231,7 @@ Function Get-PsArkQueuedTransactionList {
 
 ##########################################################################################################################################################################################################
 
-<#
-.SYNOPSIS
-    Create a new signed transaction on the selected Ark Network
-.DESCRIPTION
-    Returns a custom object with the following properties:
-        id                : ID of the transaction being queried. [String]
 
-        type              : Type of transaction. [Int32]
-
-        recipientId       : Address that received the transaction. [String]
-
-        SenderPublicKey   : Public Key of the transaction sender. [String]
-
-        Signature         : Signature of the transaction. [String]
-
-        fee               : Transaction fee paid. [Int32]
-
-        asset             : Object representing tx assets. [PSCustomObject]
-
-        timestamp         : Integer timestamp of transaction. [Int32]
-
-        vendorField       : String to be sent as the vendorfield [string]
-
-        amount            : Integer representing the "satoshi" amount of ark to send
-.PARAMETER RecipientId
-    String representing the address of the wallet to which ARK is being sent
-.PARAMETER SatoshiAmount
-    Long Int representing the "satoshi" value of the ARK to be sent
-.PARAMETER PassPhrase
-    11 word passphrase for sending wallet
-.PARAMETER Fee
-    Long Int representing the "satoshi" value of the transaction fee to be paid
-.PARAMETER Type
-    Byte value representing the type of transaction to be sent, currently only type 0 implemented
-.PARAMETER Asset
-    Asset object to be sent with transaction, not currently implemented
-.PARAMETER Network
-    String representing the network that should be used for the transaction, currently only MAINET and DEVNET implemented
-.EXAMPLE
-    Create-PsArkTransaction -RecipientId "DHytfsYZtpJeiNTBuysm4eP41dSwpieFY2" -SatoshiAmount 1100000000 -VendorField "Testing PsArk" -PassPhrase "11 word passphrase" -Fee 10000000 -Network "Devnet" -type 0
-#>
-Function Create-PsArkTransaction {
-    [cmdletbinding()]
-        param(
-            [string]$RecipientId,        
-            [long]$SatoshiAmount,
-            [string]$VendorField,
-            [string]$PassPhrase,
-            [long]$Fee = 10000000,
-            [byte]$Type,
-            [PSCustomObject]$Asset,
-            [ValidateSet("MainNet","Devnet")]
-              [string]$NetWork
-        )
-    
-    $Transaction = [ordered]@{
-        id = ""
-        timestamp = Get-PsArkTimeStamp
-        recipientId = $RecipientId
-        amount = $SatoshiAmount
-        fee = $Fee
-        type = [byte]0   #Right now only supporting type 0 tx's will expand to support other typles later
-        vendorField = $VendorField
-        signature = ""
-        senderPublicKey = Get-PsArkPublicKey -PassPhrase $PassPhrase
-    }
-    
-    if($Asset) {
-        $Transaction.asset = $Asset
-    }
-
-    $Transaction = Sign-PsArkTransaction -Transaction $Transaction -passphrase $PassPhrase
-    $Transaction.Id = Get-PsArkTransactionId -Transaction $Transaction
-    Return $Transaction
-}
 
 <#
 Send transaction
@@ -1350,7 +1276,7 @@ Function Send-PsArkTransaction {
   [CmdletBinding()]
   Param(
       [parameter(Mandatory = $True)]
-      [System.String] $URI,
+      [System.String] $Network,
 
       [parameter(Mandatory = $True)]
       [System.String] $Secret,
@@ -1361,31 +1287,33 @@ Function Send-PsArkTransaction {
       [parameter(Mandatory = $True)]
       [System.String] $Recipient,
 
+      [parameter(Mandatory = $True)]
+      [System.String] $VendorField,
+
       [parameter(Mandatory = $False)]
       [System.String] $SecondSecret=''
       )
 
-  if( $SecondSecret -ne '' )
-  {
-    $Private:Body = @{
-            secret=$Secret
-            amount=[int]$Amount
-            recipientId=$Recipient
-            secondSecret=$SecondSecret
-            }
-  }
-  else
-  {
-    $Private:Body = @{
-            secret=$Secret
-            amount=[int]$Amount
-            recipientId=$Recipient
-            }
-  }
+    $Transaction = Create-PsArkTransaction -RecipientId $recipient -SatoshiAmount $Amount -VendorField $VendorField -PassPhrase $Secret
+    $Body = @{transactions = @($Transaction)}
 
-  $Private:Output = Invoke-RestMethod $( $URI+'api/transactions' ) -Method Put -Body $( $Body | ConvertTo-Json ) -ContentType 'application/json'
-  if( $Output.success -eq $True ) { $Output.transactionId }
+    $NetworkInfo = $Script:Network_Data.$Network
+    $Peer = Get-Random $NetworkInfo.peers
+    $Port = $Peer.substring($Peer.indexOf(":") + 1,($Peer.length - 1) -  $Peer.indexOf(":"))
+    $Version = $Script:PsArk_Version
+    $URL = "http://$($peer)/peer/transactions"
+    
+    $Headers = @{
+        Version = $Version
+        Port = $Port
+        NetHash = $NetworkInfo.nethash        
+    }
 
+    $Private:Output =Invoke-PsArkApiCall -URL $URL -Method "Post" -Body $Body -Headers $Headers
+    if( $Output.success -eq $True )
+    {
+        return $Output.transactionIds
+    }
 }
 
 
@@ -2905,7 +2833,10 @@ Function Invoke-PsArkApiCall {
         [System.String] $Method,
 
         [parameter(Mandatory = $False)]
-        [System.Collections.Hashtable] $Body = @{}
+        [System.Collections.Hashtable] $Body = @{},
+
+        [parameter(Mandatory = $False)]
+        [System.Collections.Hashtable] $Headers = @{}
         )
 
     if( $Method -eq 'Get' )
@@ -2917,7 +2848,8 @@ Function Invoke-PsArkApiCall {
     elseif( ( $Method -eq 'Post' ) -or ( $Method -eq 'Put' ) )
     {
         Write-Verbose "Invoke-PsArkApiCall [$Method] => $URL"
-        Try { $Private:WebRequest = Invoke-WebRequest -UseBasicParsing -URI $URL -Method $Method -Body $Body }
+        $Content = $Body | ConvertTo-Json
+        Try { $Private:WebRequest = Invoke-WebRequest -URI $URL -Method $Method -Body $Content -Headers $Headers -ContentType 'application/json' }
         Catch { Write-Warning "Invoke-WebRequest FAILED on $URL !" }
     }
     if( ( $WebRequest.StatusCode -eq 200 ) -and ( $WebRequest.StatusDescription -eq 'OK' ) )
@@ -2926,7 +2858,7 @@ Function Invoke-PsArkApiCall {
         if( $Result.success -eq $True ) { $Result }
         else { Write-Warning "Invoke-PsArkApiCall | success => false | error => $($Result.error)" }
     }
-    else { Write-Warning "Invoke-PsArkApiCall | WebRequest returned Status '$($WebRequest.StatusCode) $($WebRequest.StatusDescription)'." }
+    else { Write-Warning "Invoke-PsArkApiCall | WebRequest returned Status '$($WebRequest.StatusCode) $($WebRequest.StatusDescription)'."; return $WebRequest }
 }
 
 ##########################################################################################################################################################################################################
@@ -3104,6 +3036,83 @@ Function Get-PsArkTransactionId ($Transaction){
     [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData($Hash)
 }
 #########################################################################################################################################################################################################
+
+<#
+.SYNOPSIS
+    Create a new signed transaction on the selected Ark Network
+.DESCRIPTION
+    Returns a custom object with the following properties:
+        id                : ID of the transaction being queried. [String]
+
+        type              : Type of transaction. [Int32]
+
+        recipientId       : Address that received the transaction. [String]
+
+        SenderPublicKey   : Public Key of the transaction sender. [String]
+
+        Signature         : Signature of the transaction. [String]
+
+        fee               : Transaction fee paid. [Int32]
+
+        asset             : Object representing tx assets. [PSCustomObject]
+
+        timestamp         : Integer timestamp of transaction. [Int32]
+
+        vendorField       : String to be sent as the vendorfield [string]
+
+        amount            : Integer representing the "satoshi" amount of ark to send
+.PARAMETER RecipientId
+    String representing the address of the wallet to which ARK is being sent
+.PARAMETER SatoshiAmount
+    Long Int representing the "satoshi" value of the ARK to be sent
+.PARAMETER PassPhrase
+    11 word passphrase for sending wallet
+.PARAMETER Fee
+    Long Int representing the "satoshi" value of the transaction fee to be paid
+.PARAMETER Type
+    Byte value representing the type of transaction to be sent, currently only type 0 implemented
+.PARAMETER Asset
+    Asset object to be sent with transaction, not currently implemented
+.PARAMETER Network
+    String representing the network that should be used for the transaction, currently only MAINET and DEVNET implemented
+.EXAMPLE
+    Create-PsArkTransaction -RecipientId "DHytfsYZtpJeiNTBuysm4eP41dSwpieFY2" -SatoshiAmount 1100000000 -VendorField "Testing PsArk" -PassPhrase "11 word passphrase" -Fee 10000000 -Network "Devnet" -type 0
+#>
+Function Create-PsArkTransaction {
+    [cmdletbinding()]
+        param(
+            [string]$RecipientId,        
+            [long]$SatoshiAmount,
+            [string]$VendorField,
+            [string]$PassPhrase,
+            [long]$Fee = 10000000,
+            [byte]$Type,
+            [PSCustomObject]$Asset,
+            [ValidateSet("MainNet","Devnet")]
+              [string]$NetWork
+        )
+    
+    $Transaction = [ordered]@{
+        id = ""
+        timestamp = Get-PsArkTimeStamp
+        recipientId = $RecipientId
+        amount = $SatoshiAmount
+        fee = $Fee
+        type = [byte]0   #Right now only supporting type 0 tx's will expand to support other typles later
+        vendorField = $VendorField
+        signature = ""
+        senderPublicKey = Get-PsArkPublicKey -PassPhrase $PassPhrase
+    }
+    
+    if($Asset) {
+        $Transaction.asset = $Asset
+    }
+
+    $Transaction = Sign-PsArkTransaction -Transaction $Transaction -passphrase $PassPhrase
+    $Transaction.Id = Get-PsArkTransactionId -Transaction $Transaction
+    Return $Transaction
+}
+#########################################################################################################################################################################################################
 Function Get-PsArkPublicKey ($PassPhrase) {
     Return [NBitcoin.DataEncoders.Encoders]::Hex.EncodeData((Get-PsArkKey -PassPhrase $passphrase).PubKey.toBytes())
 }
@@ -3140,8 +3149,8 @@ Export-ModuleMember -Function Get-PsArkUnconfirmedTransactionList
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionById
 #Export-ModuleMember -Function Get-PsArkQueuedTransactionList
 
-Export-ModuleMember -Function Create-PsArkTransaction
-#Export-ModuleMember -Function Send-PsArkTransaction
+# Export-ModuleMember -Function Create-PsArkTransaction
+Export-ModuleMember -Function Send-PsArkTransaction
 
 # Peers #----------------------------------------------------------------------------
 
