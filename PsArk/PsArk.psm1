@@ -5,7 +5,7 @@ Author  :   Gr33nDrag0n
 History :   2017/05/14 - Release v0.1.0.0
             2017/04/20 - Creation of the module.
 
-Reference : https://github.com/LiskHQ/lisk-wiki/wiki/Lisk-API-Reference
+Reference : https://github.com/LiskHQ/lisk-swiki/wiki/Lisk-API-Reference
 
 # Account #--------------------------------------------------------------------------
 
@@ -1234,41 +1234,22 @@ Function Get-PsArkQueuedTransactionList {
 
 
 <#
-Send transaction
-
-Send transaction to broadcast network.
-
-PUT /api/transactions
-
-Request
-
-{
-    "secret" : "Secret key of account",
-    "amount" : /* Amount of transaction * 10^8. Example: to send 1.1234 LISK, use 112340000 as amount */,
-    "recipientId" : "Recipient of transaction. Address or username.",
-    "publicKey" : "Public key of sender account, to verify secret passphrase in wallet. Optional, only for UI",
-    "secondSecret" : "Secret key from second transaction, required if user uses second signature"
-}
-
-Response
-
-{
-  "success": true,
-  "transactionId": "id of added transaction"
-}
-
-Example
-
-curl -k -H "Content-Type: application/json" \
--X PUT -d '{"secret":"<INSERT SECRET HERE>","amount":<INSERT AMOUNT HERE>,"recipientId":"<INSERT WALLET ADDRESS HERE>"}' \
-http://localhost:8000/api/transactions
-
-Example - Second Secret
-
-curl -k -H "Content-Type: application/json" \
--X PUT -d '{"secret":"<INSERT SECRET HERE>","secondSecret":"<INSERT SECOND SECRET HERE>",
-"amount":<INSERT AMOUNT HERE>,"recipientId":"<INSERT WALLET ADDRESS HERE>"}' \
-http://localhost:8000/api/transactions
+    .SYNOPSIS
+        Creates and sends a transaction
+    .DESCRIPTION
+        Sends a transaction on the specified network and retuns the transaction ID as a string
+    .PARAMETER Network
+        A string specifying the network to send the transaction on.  Accepts "DevNet" or "MainNet"
+    .PARAMETER Secret
+        Passphrase for the account to send ARK from
+    .PARAMETER Amount
+        Ammount of ARK to send in satoshi
+    .PARAMETER Recipient
+        Address to send ARK to
+    .PARAMETER VendorField
+        String to be passed as the vendorfield for the transaction
+    .PARAMETER SecondSecret
+        NOT YET IMPLEMENTED!! Second secret for sending accounts with dual signatures
 #>
 
 Function Send-PsArkTransaction {
@@ -1276,6 +1257,7 @@ Function Send-PsArkTransaction {
   [CmdletBinding()]
   Param(
       [parameter(Mandatory = $True)]
+      [ValidateSet("DevNet","MainNet")]
       [System.String] $Network,
 
       [parameter(Mandatory = $True)]
@@ -1298,10 +1280,10 @@ Function Send-PsArkTransaction {
     $Body = @{transactions = @($Transaction)}
 
     $NetworkInfo = $Script:Network_Data.$Network
-    $Peer = Get-Random $NetworkInfo.peers
-    $Port = $Peer.substring($Peer.indexOf(":") + 1,($Peer.length - 1) -  $Peer.indexOf(":"))
+    $Peer = Find-PsArkPeer -Network $Network
+    $Port = $Peer.Port
     $Version = $Script:PsArk_Version
-    $URL = "http://$($peer)/peer/transactions"
+    $URL = "http://$($peer.IP):$($peer.Port)/peer/transactions"
     
     $Headers = @{
         Version = $Version
@@ -1544,7 +1526,6 @@ Function Find-PsArkPeer {
     $Selectednetwork = $Script:Network_Data.$Network
 
     $InitialSeed = Get-Random -InputObject $Selectednetwork.peers
-    Write-Host "$InitialSeed/"
 
     Return Get-PsArkPeerList -URL "$InitialSeed/" | Get-Random
     
