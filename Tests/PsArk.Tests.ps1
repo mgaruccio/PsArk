@@ -395,4 +395,55 @@ InModuleScope PsArk {
         }
     }
 
+    Describe "Find-PsArkPeer" {
+        $SamplePeerList = Import-Clixml ".\Tests\SampleObjects\PeerList.xml"
+        
+        Mock Get-PsArkPeerList {Return $SamplePeerList} -ModuleName "PsArk" -Verifiable -ParameterFilter {($URL -like "*.*.*.*:4002/")}
+
+        $NewPeer = Find-PsArkPeer -Network "Devnet"
+
+        It "Queries PsArkPeerList and Peer endpoints to get a currently working api end point" {
+            Assert-VerifiableMocks
+        }
+        It "Returns a peer" {
+            $NewPeer.Port | Should Be 4002
+            $Newpeer.Version | Should BeLike "1.*.*"
+        }
+    }
+    
+    Describe "Create-PsArkTransaction" {
+        $SampleTxObjectUnsigned = Import-Clixml ".\Tests\SampleObjects\Transaction-Unsigned.xml"
+        $SampleTxObjectSigned = Import-Clixml ".\Tests\SampleObjects\Transaction-Signed.xml"
+        $SampleTxObjectSignedId = (Import-Clixml ".\Tests\SampleObjects\Transaction-Signed-Id.xml").id
+        $SamplePublicKey = "0387199b7480e5081b7fa3972c0f3d20df156f0b3560c00ee7d06fcdc2164f0388"
+
+        $TestPassPhrase = "PassPhrase"
+
+        Mock Get-PsArkTimeStamp {Return $SampleTxObjectUnsigned.Timestamp} -ModuleName "PsArk" -Verifiable
+        Mock Get-PsArkPublicKey {Return $SamplePublicKey} -ModuleName "PsArk" -Verifiable 
+        Mock Sign-PsArkTransaction {Return $SampleTxObjectSigned} -ModuleName "PsArk" -Verifiable 
+        Mock Get-PsArktransactionId {Return $SampleTxObjectSignedId} -ModuleName "PsArk" -Verifiable
+
+        $TX = Create-PsArkTransaction -RecipientId $SampleTxObjectUnsigned.RecipientId -SatoshiAmount $SampleTxObjectUnsigned.amount -VendorField "Testing PsArk" -PassPhrase $TestPassPhrase -Fee $SampleTxObjectUnsigned.fee -Network "Devnet" -type 0
+
+        It "Calls to Get-PsArkTimeStamp for the current ARK formatted time" {
+            Assert-MockCalled -CommandName Get-PsArkTimeStamp
+        }
+
+        It "Calls to Get-PsArkPublicKey and then correctly formats the public key" {
+            Assert-MockCalled -CommandName Get-PsArkPublicKey -ParameterFilter {$passphrase -eq $TestPassPhrase}
+            $TX.senderPublicKey | Should be "0387199b7480e5081b7fa3972c0f3d20df156f0b3560c00ee7d06fcdc2164f0388"
+        }
+
+        It "Calls Sign-PsArkTransaction with the passphrase that was passed into the function and correctly applies the signature to the returned result" {
+            Assert-MockCalled -CommandName Sign-PsArkTransaction -ParameterFilter {($Transaction.id -eq $SampleTxObjectUnsigned.id) -and ($passphrase -eq $passphrase)}
+            $TX.signature | Should Be "3045022100eed84eb6bc193f0120717fd894f0019a4cafdeddf22fedf37d3073ac367569870220763a7f3365d3f0bd55c29ceff3bfd8743f456668fb0e171a8535acf37840ec8a"
+        }
+
+        It "Calls Get-PsArkTransactionId and correctly applies the ID to the signed transaction" {
+            Assert-MockCalled -CommandName Get-PsArkTransactionId  -ParameterFilter {$Transaction.id -eq $SampleTxObjectSigned.id}
+            $TX.id | Should Be "69e7cc0a2eee67f909855bb89ba9a84e5b1fb28468a6f4594a76606cac2602e4"
+        }
+    }
+
 }
