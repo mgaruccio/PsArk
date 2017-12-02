@@ -18,7 +18,7 @@ InModuleScope PsArk {
 
         #These tests eventually need to be broken out into individual tests with Assert-MockCalled but I haven't used it yet
         It "Makes a call all three programmed methods and a fourth with a body" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
 
         It "Returns a valid webresponse object from each of the requests" {
@@ -46,7 +46,7 @@ InModuleScope PsArk {
         $Account = Get-PsArkAccount -URL "http://mainnetURL.com/" -Address "Address"
 
         It "Queries the provided URL for information on the specified account" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns an account object with basic properties passed through" {
             $Account.Address | Should Be "Address"
@@ -65,7 +65,7 @@ InModuleScope PsArk {
         $AccountBalance = Get-PsArkAccountBalance -URL 'http://mainnetURL.com/' -Address 'Address'
 
         It "Queries the provided URL for the balance of the specified account" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns an object with an address, balance, and balancefloat" {
             $AccountBalance.Address | Should Be "Address"
@@ -86,7 +86,7 @@ InModuleScope PsArk {
         $Key = Get-PsArkAccountPublicKey -URL "http://mainnetURL.com/" -Address "Address"
 
         It "Calls to the ark API for a public key associated with the string passed to the -Address param" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Public Key" {
             $Key | Should be "PublicKey"
@@ -106,7 +106,7 @@ InModuleScope PsArk {
         $votes = Get-PsArkAccountVoteList -URL "http://mainnetURL.com/" -Address "Address"
         
         It "Queries the Ark api for the vote list of the specified account" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         
         It "Returns a valid vote list object" {
@@ -128,7 +128,7 @@ InModuleScope PsArk {
         $Status = Get-PsArkLoadingStatus -URL 'http://mainnetURL.com/'
 
         It "Queries the specified URL for the client status" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
 
         It "Returns a valid status object" {
@@ -148,7 +148,7 @@ InModuleScope PsArk {
         $Status = Get-PsArkSyncStatus -URL "http://mainnetURL.com/"
 
         It "Queries the specified URL for the nodes syncstatus" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Sync Status object" {
             $Status.syncing | Should Be $True
@@ -165,7 +165,7 @@ InModuleScope PsArk {
         $Status = Get-PsArkBlockReceiptStatus -URL "http://mainnetURL.com/"
 
         It "Queries the specified URL for the nodes block receipt status" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a bool" {
             $Status | Should Be $true
@@ -188,7 +188,7 @@ InModuleScope PsArk {
         $TransactionInfo = Get-PsArkTransactionById -URL 'http://mainnetURL.com/' -ID 'txID'
 
         It "Queries the provided URL for a transaction with the ID passed in the ID parameter" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         
         It "Returns an object with basic tx parameters" {
@@ -218,7 +218,7 @@ InModuleScope PsArk {
         $Transactions = Get-PsArkTransactionList -URL 'http://mainnetURL.com/' -SenderId 'senderID'
                 
         It "Queries the provided URL for all transactions with a sender ID passed in the SenderID parameter" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }    
         It "Returns an array of transactionss" {
             $Transactions[0].TransactionID | Should Be "txID"
@@ -241,7 +241,7 @@ InModuleScope PsArk {
         $TransactionInfo = Get-PsArkUnconfirmedTransactionById -URL 'http://mainnetURL.com/' -ID 'txID'
 
         It "Queries the provided URL for a transaction with the ID passed in the ID parameter" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         
         It "Returns an object with basic tx parameters" {
@@ -271,7 +271,7 @@ InModuleScope PsArk {
         $Transactions = Get-PsArkUnconfirmedTransactionList -URL 'http://mainnetURL.com/'
                 
         It "Queries the provided URL for all transactions with a sender ID passed in the SenderID parameter" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }    
         It "Returns an array of transactionss" {
             $Transactions[0].TransactionID | Should Be "txID"
@@ -293,7 +293,7 @@ InModuleScope PsArk {
         $Peer = Get-PsArkPeer -URL "http://mainnetURL.com/" -IP "ipAddress" -Port 4001
 
         It "Queries the provided URL for peer information" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Peer" {
             $Peer.IP | Should Be "ipAddress"
@@ -320,7 +320,7 @@ InModuleScope PsArk {
         $Peers = Get-PsArkPeerList -URL "http://mainnetURL.com/"
 
         It "Queries the provided URL for a list of peers" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns an array of peers" {
             $Peers[1].IP | Should Be "ipAddress"
@@ -341,7 +341,7 @@ InModuleScope PsArk {
         $Block = Get-PsArkBlockByID -URL "http://mainnetURL.com/" -ID "blockID"
 
         It "Queries the specified URL for a block with the specified ID" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Block" {
             $Block.ID | Should Be "blockID"
@@ -363,7 +363,7 @@ InModuleScope PsArk {
         $Block = Get-PsArkBlockByHeight -URL "http://mainnetURL.com/" -Height 723647
 
         It "Queries the specified URL for a block with the specified ID" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Block" {
             $Block.ID | Should Be "blockID"
@@ -386,7 +386,7 @@ InModuleScope PsArk {
         $Block = Get-PsArkBlockByPreviousBlockID -URL "http://mainnetURL.com/" -ID "blockID"
 
         It "Queries the provided URL for the block after the indicated block" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a Block" {
             $Block.ID | Should Be "blockID"
@@ -403,7 +403,7 @@ InModuleScope PsArk {
         $NewPeer = Find-PsArkPeer -Network "Devnet"
 
         It "Queries PsArkPeerList and Peer endpoints to get a currently working api end point" {
-            Assert-VerifiableMocks
+            Assert-VerifiableMock
         }
         It "Returns a peer" {
             $NewPeer.Port | Should Be 4002
