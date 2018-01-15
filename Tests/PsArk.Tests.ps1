@@ -40,12 +40,14 @@ InModuleScope PsArk {
                 balance = 110000000
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
     
         Mock Invoke-PsArkApiCall {Return $SampleAct} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/accounts?address=Address"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
     
         $Account = Get-PsArkAccount -Network "DevNet" -Address "Address"
     
-        It "Queries the provided URL for information on the specified account" {
+        It "Finds a valid peer and queries it for information on the specified account" {
             Assert-VerifiableMock
         }
         It "Returns an account object with basic properties passed through" {
@@ -59,12 +61,14 @@ InModuleScope PsArk {
                 address = "Address"
                 balance = 110000000
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
         Mock Invoke-PsArkApiCall {Return $SampleAct} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/accounts/getBalance/?address=Address"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
     
         $AccountBalance = Get-PsArkAccountBalance -Network "Devnet" -Address 'Address'
 
-        It "Queries the provided URL for the balance of the specified account" {
+        It "Finds a valid peer and queries it for the balance of the specified account" {
             Assert-VerifiableMock
         }
         It "Returns an object with an address, balance, and balancefloat" {
@@ -80,12 +84,14 @@ InModuleScope PsArk {
             success = $True
             publicKey = "PublicKey"
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
         Mock Invoke-PsArkApiCall {Return $SampleKey} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/accounts/getPublicKey?address=Address"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
         $Key = Get-PsArkAccountPublicKey -Network "DevNet" -Address "Address"
 
-        It "Calls to the ark API for a public key associated with the string passed to the -Address param" {
+        It "Finds a valid peer and queries it's API for a public key associated with the string passed to the -Address param" {
             Assert-VerifiableMock
         }
         It "Returns a Public Key" {
