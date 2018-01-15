@@ -331,13 +331,17 @@ Function Get-PsArkAccountVoteList {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts/delegates?address='+$Address )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/accounts/delegates?address='+$Address )
     if( $Output.success -eq $True )
     {
         $Output | Select-Object -ExpandProperty delegates | Select-Object -Property @{Label="Name";Expression={$_.username}}, `

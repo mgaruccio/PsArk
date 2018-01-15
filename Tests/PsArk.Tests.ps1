@@ -106,10 +106,12 @@ InModuleScope PsArk {
                 vote = 110000000
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleVoteList} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/accounts/delegates?address=Address"}
+        Mock Invoke-PsArkApiCall {Return $SampleVoteList} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/accounts/delegates?address=Address"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $votes = Get-PsArkAccountVoteList -URL "http://mainnetURL.com/" -Address "Address"
+        $votes = Get-PsArkAccountVoteList -Network "DevNet" -Address "Address"
         
         It "Queries the Ark api for the vote list of the specified account" {
             Assert-VerifiableMock
