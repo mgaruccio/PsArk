@@ -152,10 +152,12 @@ InModuleScope PsArk {
             success = $true
             syncing = $true
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleStatus} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/loader/status/sync"}
+        Mock Invoke-PsArkApiCall {Return $SampleStatus} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/loader/status/sync"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Status = Get-PsArkSyncStatus -URL "http://mainnetURL.com/"
+        $Status = Get-PsArkSyncStatus -Network "DevNet"
 
         It "Queries the specified URL for the nodes syncstatus" {
             Assert-VerifiableMock

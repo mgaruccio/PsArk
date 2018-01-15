@@ -735,10 +735,14 @@ Function Get-PsArkSyncStatus {
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/loader/status/sync' )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/loader/status/sync' )
     if( $Output.Success -eq $True )
     {
         $Output | Select-Object -Property  @{Label="Syncing";Expression={$_.syncing}}, `
