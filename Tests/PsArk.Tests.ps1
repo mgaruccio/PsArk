@@ -81,9 +81,9 @@ InModuleScope PsArk {
             publicKey = "PublicKey"
         }
 
-        Mock Invoke-PsArkApiCall {Return $SampleKey} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/accounts/getPublicKey?address=Address"}
+        Mock Invoke-PsArkApiCall {Return $SampleKey} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/accounts/getPublicKey?address=Address"}
 
-        $Key = Get-PsArkAccountPublicKey -URL "http://mainnetURL.com/" -Address "Address"
+        $Key = Get-PsArkAccountPublicKey -Network "DevNet" -Address "Address"
 
         It "Calls to the ark API for a public key associated with the string passed to the -Address param" {
             Assert-VerifiableMock
