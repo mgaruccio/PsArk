@@ -130,10 +130,12 @@ InModuleScope PsArk {
             success = $True
             loaded = $True
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleStatus} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/loader/status"}
+        Mock Invoke-PsArkApiCall {Return $SampleStatus} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/loader/status"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Status = Get-PsArkLoadingStatus -URL 'http://mainnetURL.com/'
+        $Status = Get-PsArkLoadingStatus -Network "DevNet"
 
         It "Queries the specified URL for the client status" {
             Assert-VerifiableMock

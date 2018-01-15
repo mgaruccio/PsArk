@@ -680,10 +680,14 @@ Function Get-PsArkLoadingStatus {
     [CmdletBinding()]
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/loader/status' )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/loader/status' )
     if( $Output.Success -eq $True )
     {
         $Output | Select-Object -Property  @{Label="Loaded";Expression={$_.loaded}}, `
