@@ -1523,11 +1523,18 @@ Function Find-PsArkPeer {
             [System.String]$Network
     )
 
-    $Selectednetwork = $Script:Network_Data.$Network
+    $Selectednetwork = $Script:Network_Data.$Network    
 
-    $InitialSeed = Get-Random -InputObject $Selectednetwork.peers
-
-    Return Get-PsArkPeerList -URL "$InitialSeed/" | Get-Random
+    while (!$PeerList) {
+        $InitialSeed = Get-Random -InputObject $Selectednetwork.peers
+        $PeerList =  Get-PsArkPeerList -URL "$InitialSeed/"
+    }
+    $currentVersion = $PeerList |
+        Where-Object -FilterScript {$_.Version -like "*.*.*"} |
+        Measure-Object -Property Version -Maximum |
+        Select-object -ExpandProperty Maximum
+    
+    Return $PeerList | Where-Object -FilterScript {$_.Version -eq $currentVersion} | Get-Random
     
 }
 
