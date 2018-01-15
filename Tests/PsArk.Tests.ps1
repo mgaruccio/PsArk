@@ -40,11 +40,11 @@ InModuleScope PsArk {
                 balance = 110000000
             }
         }
-
-        Mock Invoke-PsArkApiCall {Return $SampleAct} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/accounts?address=Address"}
-
-        $Account = Get-PsArkAccount -URL "http://mainnetURL.com/" -Address "Address"
-
+    
+        Mock Invoke-PsArkApiCall {Return $SampleAct} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/accounts?address=Address"}
+    
+        $Account = Get-PsArkAccount -Network "DevNet" -Address "Address"
+    
         It "Queries the provided URL for information on the specified account" {
             Assert-VerifiableMock
         }

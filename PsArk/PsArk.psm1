@@ -153,29 +153,33 @@ Import-Module "$($PsScriptroot)\Resources\nbitcoin.dll"
 #>
 
 Function Get-PsArkAccount {
-
+    
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $Address
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/accounts?address='+$Address )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/accounts?address='+$Address )
     if( $Output.success -eq $True )
     {
         $Output.account | Select-Object -Property  @{Label="Address";Expression={$_.address}}, `
-                                                   @{Label="PublicKey";Expression={$_.publicKey}}, `
-                                                   @{Label="SecondPublicKey";Expression={$_.secondPublicKey}}, `
-                                                   @{Label="Balance";Expression={$_.balance}}, `
-                                                   @{Label="BalanceFloat";Expression={$_.balance/100000000}}, `
-                                                   @{Label="UnconfirmedBalance";Expression={$_.unconfirmedBalance}}, `
-                                                   @{Label="UnconfirmedBalanceFloat";Expression={$_.unconfirmedBalance/100000000}}, `
-                                                   @{Label="SecondSignature";Expression={[bool] $_.secondSignature}}, `
-                                                   @{Label="UnconfirmedSecondSignature";Expression={[bool] $_.unconfirmedSignature}}, `
-                                                   @{Label="MultiSignatures";Expression={$_.multisignatures}}, `
-                                                   @{Label="UnconfirmedMultiSignatures";Expression={$_.u_multisignatures}}
+                                                    @{Label="PublicKey";Expression={$_.publicKey}}, `
+                                                    @{Label="SecondPublicKey";Expression={$_.secondPublicKey}}, `
+                                                    @{Label="Balance";Expression={$_.balance}}, `
+                                                    @{Label="BalanceFloat";Expression={$_.balance/100000000}}, `
+                                                    @{Label="UnconfirmedBalance";Expression={$_.unconfirmedBalance}}, `
+                                                    @{Label="UnconfirmedBalanceFloat";Expression={$_.unconfirmedBalance/100000000}}, `
+                                                    @{Label="SecondSignature";Expression={[bool] $_.secondSignature}}, `
+                                                    @{Label="UnconfirmedSecondSignature";Expression={[bool] $_.unconfirmedSignature}}, `
+                                                    @{Label="MultiSignatures";Expression={$_.multisignatures}}, `
+                                                    @{Label="UnconfirmedMultiSignatures";Expression={$_.u_multisignatures}}
     }
 }
 
