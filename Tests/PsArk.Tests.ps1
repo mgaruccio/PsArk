@@ -22,11 +22,11 @@ InModuleScope PsArk {
         }
 
         It "Returns a valid webresponse object from each of the requests" {
-            $GetTest.success | Should Be true
-            $PutTest.success | Should Be true
-            $PostTest.success | Should Be true
+            $GetTest.success | Should -Be true
+            $PutTest.success | Should -Be true
+            $PostTest.success | Should -Be true
 
-            $GetTest.peers[1].port | Should Be 4001
+            $GetTest.peers[1].port | Should -Be 4001
             
         }
 
@@ -49,8 +49,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns an account object with basic properties passed through" {
-            $Account.Address | Should Be "Address"
-            $Account.Balance | Should Be 110000000
+            $Account.Address | Should -Be "Address"
+            $Account.Balance | Should -Be 110000000
         }
     }
     Describe "Get-PsArkAccountBalance" {
@@ -68,9 +68,9 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns an object with an address, balance, and balancefloat" {
-            $AccountBalance.Address | Should Be "Address"
-            $AccountBalance.Balance | Should Be 110000000
-            $AccountBalance.BalanceFloat | Should Be 1.1
+            $AccountBalance.Address | Should -Be "Address"
+            $AccountBalance.Balance | Should -Be 110000000
+            $AccountBalance.BalanceFloat | Should -Be 1.1
         }
     }
     Describe "Get-PsArkAccountPublicKey" {
@@ -89,7 +89,7 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Public Key" {
-            $Key | Should be "PublicKey"
+            $Key | Should -Be "PublicKey"
         }        
     }
     Describe "Get-PsArkAccountVoteList" {
@@ -110,9 +110,9 @@ InModuleScope PsArk {
         }
         
         It "Returns a valid vote list object" {
-            $votes.name | Should Be "username"
-            $votes.vote | Should Be 110000000
-            $votes.voteFloat | Should Be 1.1
+            $votes.name | Should -Be "username"
+            $votes.vote | Should -Be 110000000
+            $votes.voteFloat | Should -Be 1.1
         }
 
     }
@@ -132,7 +132,7 @@ InModuleScope PsArk {
         }
 
         It "Returns a valid status object" {
-            $Status.loaded | Should Be $True
+            $Status.loaded | Should -Be $True
         }
     }
 
@@ -151,7 +151,7 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Sync Status object" {
-            $Status.syncing | Should Be $True
+            $Status.syncing | Should -Be $True
         }
     }
     Describe "Get-PsArkBlockReceiptStatus" {
@@ -168,8 +168,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a bool" {
-            $Status | Should Be $true
-            $Status | Should BeOfType [bool]
+            $Status | Should -Be $true
+            $Status | Should -BeOfType [bool]
         }
     }
 
@@ -192,8 +192,8 @@ InModuleScope PsArk {
         }
         
         It "Returns an object with basic tx parameters" {
-            $TransactionInfo.TransactionID | Should Be "txID"
-            $TransactionInfo.Amount | Should Be 1000
+            $TransactionInfo.TransactionID | Should -Be "txID"
+            $TransactionInfo.Amount | Should -Be 1000
         }        
     }
 
@@ -221,8 +221,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }    
         It "Returns an array of transactionss" {
-            $Transactions[0].TransactionID | Should Be "txID"
-            $Transactions[1].Amount | Should Be  13000
+            $Transactions[0].TransactionID | Should -Be "txID"
+            $Transactions[1].Amount | Should -Be  13000
         }
     }
 
@@ -245,8 +245,8 @@ InModuleScope PsArk {
         }
         
         It "Returns an object with basic tx parameters" {
-            $TransactionInfo[0].TransactionID | Should Be "txID"
-            $TransactionInfo[0].Amount | Should Be 1000
+            $TransactionInfo[0].TransactionID | Should -Be "txID"
+            $TransactionInfo[0].Amount | Should -Be 1000
         }        
     }
     
@@ -274,8 +274,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }    
         It "Returns an array of transactionss" {
-            $Transactions[0].TransactionID | Should Be "txID"
-            $Transactions[1].Amount | Should Be  13000
+            $Transactions[0].TransactionID | Should -Be "txID"
+            $Transactions[1].Amount | Should -Be  13000
         }
     }
     Describe "Get-PsArkPeer" {
@@ -296,8 +296,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Peer" {
-            $Peer.IP | Should Be "ipAddress"
-            $Peer.status | Should Be "status"
+            $Peer.IP | Should -Be "ipAddress"
+            $Peer.status | Should -Be "status"
         }
     }
     Describe "Get-PsArkPeerList" {
@@ -323,8 +323,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns an array of peers" {
-            $Peers[1].IP | Should Be "ipAddress"
-            $Peers[0].status | Should Be "status"
+            $Peers[1].IP | Should -Be "ipAddress"
+            $Peers[0].status | Should -Be "status"
         }
     }
     Describe "Get-PsArkBlockByID" {
@@ -344,8 +344,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Block" {
-            $Block.ID | Should Be "blockID"
-            $Block.version | Should Be "version"
+            $Block.ID | Should -Be "blockID"
+            $Block.version | Should -Be "version"
         }
     }
     Describe "Get-PsArkBlockByHeight" {
@@ -366,9 +366,9 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Block" {
-            $Block.ID | Should Be "blockID"
-            $Block.version | Should Be "version"
-            $Block.height | Should Be 723647
+            $Block.ID | Should -Be "blockID"
+            $Block.version | Should -Be "version"
+            $Block.height | Should -Be 723647
         }
     }
     Describe "Get-PsArkBlockByPreviousBlockID" {
@@ -389,9 +389,9 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a Block" {
-            $Block.ID | Should Be "blockID"
-            $Block.version | Should Be "version"
-            $Block.height | Should Be 723647
+            $Block.ID | Should -Be "blockID"
+            $Block.version | Should -Be "version"
+            $Block.height | Should -Be 723647
         }
     }
 
@@ -406,8 +406,8 @@ InModuleScope PsArk {
             Assert-VerifiableMock
         }
         It "Returns a peer" {
-            $NewPeer.Port | Should Be 4002
-            $Newpeer.Version | Should BeLike "1.*.*"
+            $NewPeer.Port | Should -Be 4002
+            $Newpeer.Version | Should -BeLike "1.*.*"
         }
     }
     
@@ -432,17 +432,17 @@ InModuleScope PsArk {
 
         It "Calls to Get-PsArkPublicKey and then correctly formats the public key" {
             Assert-MockCalled -CommandName Get-PsArkPublicKey -ParameterFilter {$passphrase -eq $TestPassPhrase}
-            $TX.senderPublicKey | Should be "0387199b7480e5081b7fa3972c0f3d20df156f0b3560c00ee7d06fcdc2164f0388"
+            $TX.senderPublicKey | Should -Be "0387199b7480e5081b7fa3972c0f3d20df156f0b3560c00ee7d06fcdc2164f0388"
         }
 
         It "Calls Sign-PsArkTransaction with the passphrase that was passed into the function and correctly applies the signature to the returned result" {
             Assert-MockCalled -CommandName Sign-PsArkTransaction -ParameterFilter {($Transaction.id -eq $SampleTxObjectUnsigned.id) -and ($passphrase -eq $passphrase)}
-            $TX.signature | Should Be "3045022100eed84eb6bc193f0120717fd894f0019a4cafdeddf22fedf37d3073ac367569870220763a7f3365d3f0bd55c29ceff3bfd8743f456668fb0e171a8535acf37840ec8a"
+            $TX.signature | Should -Be "3045022100eed84eb6bc193f0120717fd894f0019a4cafdeddf22fedf37d3073ac367569870220763a7f3365d3f0bd55c29ceff3bfd8743f456668fb0e171a8535acf37840ec8a"
         }
 
         It "Calls Get-PsArkTransactionId and correctly applies the ID to the signed transaction" {
             Assert-MockCalled -CommandName Get-PsArkTransactionId  -ParameterFilter {$Transaction.id -eq $SampleTxObjectSigned.id}
-            $TX.id | Should Be "69e7cc0a2eee67f909855bb89ba9a84e5b1fb28468a6f4594a76606cac2602e4"
+            $TX.id | Should -Be "69e7cc0a2eee67f909855bb89ba9a84e5b1fb28468a6f4594a76606cac2602e4"
         }
     }
 
