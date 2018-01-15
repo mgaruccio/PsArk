@@ -1,3 +1,5 @@
+ [![Build status](https://ci.appveyor.com/api/projects/status/b6nmj3r6sgplc180?svg=true)](https://ci.appveyor.com/project/mgaruccio/psark)
+ 
  ![##Images_README_Splash##](./img/splash.png)
 
 # **Ark API PowerShell Module**
