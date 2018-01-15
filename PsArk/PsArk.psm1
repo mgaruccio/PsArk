@@ -830,13 +830,17 @@ Function Get-PsArkTransactionById {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $ID
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/get?id='+$ID )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/transactions/get?id='+$ID )
     if( $Output.success -eq $True )
     {
         $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
