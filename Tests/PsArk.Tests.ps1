@@ -227,11 +227,13 @@ InModuleScope PsArk {
                 }
             )
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
         
 
-        Mock Invoke-PsArkApiCall {Return $SampleTxArr} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/transactions?SenderId=senderID&orderBy=timestamp:desc"}
+        Mock Invoke-PsArkApiCall {Return $SampleTxArr} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/transactions?SenderId=senderID&orderBy=timestamp:desc"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Transactions = Get-PsArkTransactionList -URL 'http://mainnetURL.com/' -SenderId 'senderID'
+        $Transactions = Get-PsArkTransactionList -Network 'DevNet' -SenderId 'senderID'
                 
         It "Queries the provided URL for all transactions with a sender ID passed in the SenderID parameter" {
             Assert-VerifiableMock

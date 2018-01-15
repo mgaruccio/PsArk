@@ -927,7 +927,8 @@ Function Get-PsArkTransactionList {
     Param(
         
         [Parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [ValidateSet("DevNet","MainNet")]
+        [System.String] $Network,
 
         [Parameter(Mandatory = $False)]
         [System.String]$BlockId,
@@ -958,7 +959,7 @@ Function Get-PsArkTransactionList {
 
     #Helper function create new query with valid seach params
     
-    $Query = "api/transactions?"
+    $Query = "/api/transactions?"
 
     if($BlockId) {
         $Query = Edit-PsArkQuery -Query $Query -NewItem 'BlockId' -NewValue $BlockId
@@ -979,9 +980,11 @@ Function Get-PsArkTransactionList {
     if($ResultSetSize) {
         $Query += "&limit=$($ResultSetSize)"
     }
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
 
     $Query += "&orderBy=$($SortBy)" + ":" + $SortOrder
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+$Query )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL "$($URL)$($Query)"
 
     $Output.transactions | ForEach-Object {$_ | Select-Object -Property @{Label="TransactionID";Expression={$_.ID}}, `
                                                        @{Label="Type";Expression={$_.type}}, `
