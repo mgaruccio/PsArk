@@ -142,8 +142,9 @@ Import-Module "$($PsScriptroot)\Resources\nbitcoin.dll"
 
         UnconfirmedMultiSignatures : (No infos available.) [Array]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
@@ -206,8 +207,9 @@ Function Get-PsArkAccount {
         UnconfirmedBalanceFloat    : Unconfirmed Balance of account in 'float'. [Double]
                                  1.1 Ark = 1.1 Value
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
@@ -251,8 +253,9 @@ Function Get-PsArkAccountBalance {
 .DESCRIPTION
     Return Public Key of account. [String]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
@@ -316,8 +319,9 @@ Function Get-PsArkAccountPublicKey {
 
         Productivity               : Delegate productivity [Decimal]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
@@ -668,8 +672,9 @@ Function Add-PsArkAccountSecondSignature {
 
         BlocksCount : Total blocks count in blockchain at loading time. [Int]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkLoadingStatus -URL https://api.arknode.net/
@@ -723,8 +728,9 @@ Lisk is different.
 
         BlockID : Current height block ID [String]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkSyncStatus -URL https://api.arknode.net/
@@ -761,8 +767,9 @@ Function Get-PsArkSyncStatus {
 .DESCRIPTION
     Returns True [Bool] if block was received in the past 120 seconds.
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkBlockReceiptStatus -URL https://api.arknode.net/
@@ -819,8 +826,9 @@ Function Get-PsArkBlockReceiptStatus {
 
         Timestamp         : Integer timestamp of transaction. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
@@ -893,8 +901,9 @@ Function Get-PsArkTransactionById {
 
             Timestamp         : Integer timestamp of transaction. [Int32]
 
-    .PARAMETER URL
-        Address of the target full node server processing the API query.
+    .PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "Devnet" and "MainNet"
 
     .PARAMETER BlockId
         Id of the block you would like to search for transactions.
