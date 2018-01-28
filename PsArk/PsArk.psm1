@@ -1408,8 +1408,8 @@ Function Send-PsArkTransaction {
 
         Many others Status are possible, see https://github.com/blakeembrey/popsicle#errors for more infos.
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the Query
 
 .PARAMETER IP
     IP of the chosen peer.
@@ -1418,7 +1418,7 @@ Function Send-PsArkTransaction {
     Port of the chosen peer.
 
 .EXAMPLE
-    $PeerInfo = Get-PsArkPeer -URL https://api.arknode.net/ -IP 149.56.126.216 -Port 4001
+    $PeerInfo = Get-PsArkPeer -Network "DevNet" -IP 149.56.126.216 -Port 4001
 
 #>
 
@@ -1426,7 +1426,7 @@ Function Get-PsArkPeer {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $IP,
@@ -1434,8 +1434,10 @@ Function Get-PsArkPeer {
         [parameter(Mandatory = $True)]
         [System.Int32] $Port
         )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers/get?ip=' + $IP + '&port=' + $Port )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/peers/get?ip=' + $IP + '&port=' + $Port )
 
     if( $Output.success -eq $True )
     {

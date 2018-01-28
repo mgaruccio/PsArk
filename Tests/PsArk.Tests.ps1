@@ -357,15 +357,17 @@ InModuleScope PsArk {
     }
     Describe "Get-PsArkPeer" {
 
-        $SamplePeer = @{
+        $SampleReturn = @{
             success = $True
             peer = @{
                 IP = "ipAddress"
                 status = "status"
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SamplePeer} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "*.*.*.*:4002/api/peers/get?ip=ipAddress&port=4001"}
+        Mock Invoke-PsArkApiCall {Return $SampleReturn} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/peers/get?ip=ipAddress&port=4001"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
         $Peer = Get-PsArkPeer -Network "DevNet" -IP "ipAddress" -Port 4001
 
