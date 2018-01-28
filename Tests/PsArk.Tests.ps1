@@ -253,10 +253,12 @@ InModuleScope PsArk {
                 Amount = 1000
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
     
-        Mock Invoke-PsArkApiCall {Return $SampleTx} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/transactions/unconfirmed/get?id=txID"}
-        
-        $TransactionInfo = Get-PsArkUnconfirmedTransactionById -URL 'http://mainnetURL.com/' -ID 'txID'
+        Mock Invoke-PsArkApiCall {Return $SampleTx} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/transactions/unconfirmed/get?id=txID"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
+
+        $TransactionInfo = Get-PsArkUnconfirmedTransactionById -Network "DevNet" -ID 'txID'
 
         It "Queries the provided URL for a transaction with the ID passed in the ID parameter" {
             Assert-VerifiableMock
@@ -282,11 +284,12 @@ InModuleScope PsArk {
                 }
             )
         }
-        
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleTxArr} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -eq "http://mainnetURL.com/api/transactions/unconfirmed"}
+        Mock Invoke-PsArkApiCall {Return $SampleTxArr} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/transactions/unconfirmed"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Transactions = Get-PsArkUnconfirmedTransactionList -URL 'http://mainnetURL.com/'
+        $Transactions = Get-PsArkUnconfirmedTransactionList -Network "DevNet"
                 
         It "Queries the provided URL for all transactions with a sender ID passed in the SenderID parameter" {
             Assert-VerifiableMock
@@ -306,9 +309,9 @@ InModuleScope PsArk {
             }
         }
 
-        Mock Invoke-PsArkApiCall {Return $SamplePeer} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/peers/get?ip=ipAddress&port=4001"}
+        Mock Invoke-PsArkApiCall {Return $SamplePeer} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "*.*.*.*:4002/api/peers/get?ip=ipAddress&port=4001"}
 
-        $Peer = Get-PsArkPeer -URL "http://mainnetURL.com/" -IP "ipAddress" -Port 4001
+        $Peer = Get-PsArkPeer -Network "DevNet" -IP "ipAddress" -Port 4001
 
         It "Queries the provided URL for peer information" {
             Assert-VerifiableMock

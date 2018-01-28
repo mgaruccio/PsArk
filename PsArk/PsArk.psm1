@@ -1042,8 +1042,8 @@ Function Get-PsArkTransactionList {
 
         Timestamp         : Integer timestamp of transaction. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Ark network selection, accepts "DevNet" and "MainNet"
 
 .PARAMETER ID 
     ID of the transaction to get information on
@@ -1056,13 +1056,16 @@ Function Get-PsArkUnconfirmedTransactionById {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $ID
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/unconfirmed/get?id='+$ID )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/transactions/unconfirmed/get?id='+$ID )
     if( $Output.success -eq $True )
     {
         $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$_.ID}}, `
@@ -1111,21 +1114,24 @@ Function Get-PsArkUnconfirmedTransactionById {
 
         Timestamp         : Integer timestamp of transaction. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the query
 
 .EXAMPLE
-    Get-PsArkUnconfirmedTransactionList -URL https://api.arknode.net/
+    Get-PsArkUnconfirmedTransactionList -Network "DevNet"
 #>
 
 Function Get-PsArkUnconfirmedTransactionList {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL        
+        [System.String] $Network        
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/unconfirmed' )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/transactions/unconfirmed' )
     if( $Output.success -eq $True )
     {
         $Output.transactions | Select-Object -Property @{Label="TransactionID";Expression={$_.ID}}, `
