@@ -1180,8 +1180,8 @@ Function Get-PsArkUnconfirmedTransactionList {
 
         Timestamp         : Integer timestamp of transaction. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the API Query
 
 .PARAMETER ID 
     ID of the transaction to get information on
@@ -1194,16 +1194,20 @@ Function Get-PsArkQueuedTransactionById {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $ID
         )
+    
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/queued/get?id='+$ID )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/transactions/queued/get?id='+$ID )
     if( $Output.success -eq $True )
     {
         $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
+                                                       @{Label="Amount";Expression={$_.amount}}, `
                                                        @{Label="Type";Expression={$_.type}}, `
                                                        @{Label="SenderAddress";Expression={$_.senderId}}, `
                                                        @{Label="RecipientAddress";Expression={$_.recipientId}}, `

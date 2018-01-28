@@ -294,10 +294,36 @@ InModuleScope PsArk {
         It "Queries the provided URL for all transactions with a sender ID passed in the SenderID parameter" {
             Assert-VerifiableMock
         }    
-        It "Returns an array of transactionss" {
+        It "Returns an array of transactions" {
             $Transactions[0].TransactionID | Should -Be "txID"
             $Transactions[1].Amount | Should -Be  13000
         }
+    }
+    Describe "Get-PsArkQueuedTransactionById" {
+        $SampleTx = @{
+            Success = $true
+            Transaction = @{
+                ID = "txID"
+                Amount = 1000
+            }
+        }
+
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
+    
+        Mock Invoke-PsArkApiCall {Return $SampleTx} -ModuleName "PsArk" -Verifiable -ParameterFilter { $URL -like "*.*.*.*:4002/api/transactions/queued/get?id=txID"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
+
+        $TransactionInfo = Get-PsArkQueuedTransactionById -Network "DevNet" -ID 'txID'
+
+        It "Queries the selected network for the specified transaction" {
+            Assert-VerifiableMock
+        }
+
+        It "Returns a transaction" {
+            $TransactionInfo.TransactionID | Should -Be "txID"
+            $TransactionInfo.Amount | Should -Be 1000
+        }   
+        
     }
     Describe "Get-PsArkPeer" {
 
