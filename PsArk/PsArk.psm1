@@ -1252,34 +1252,38 @@ Function Get-PsArkQueuedTransactionById {
 
         Timestamp         : Integer timestamp of transaction. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the query
 
 .EXAMPLE
-    Get-PsArkUnconfirmedTransactionList -URL https://api.arknode.net/
+    Get-PsArkUnconfirmedTransactionList -Network "Devnet"
 #>
 
 Function Get-PsArkQueuedTransactionList {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL        
+        [System.String] $Network     
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/transactions/queued' )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/transactions/queued' )
     if( $Output.success -eq $True )
     {
-        $Output.transaction | Select-Object -Property  @{Label="TransactionID";Expression={$ID}}, `
-                                                       @{Label="Type";Expression={$_.type}}, `
-                                                       @{Label="SenderAddress";Expression={$_.senderId}}, `
-                                                       @{Label="RecipientAddress";Expression={$_.recipientId}}, `
-                                                       @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
-                                                       @{Label="Signature";Expression={$_.signature}}, `
-                                                       @{Label="Fee";Expression={$_.fee}}, `
-                                                       @{label="Confirmations";Expression={$_.confirmations}}, `
-                                                       @{Label="BlockID";Expression={$_.blockId}}, `
-                                                       @{Label="Asset";Expression={$_.asset}}, `
-                                                       @{Label="Timestamp";Expression={$_.timestamp}}
+        $Output.transactions | Select-Object -Property  @{Label="TransactionID";Expression={$_.ID}}, `
+                                                        @{Label="Amount";Expression={$_.amount}}, `
+                                                        @{Label="Type";Expression={$_.type}}, `
+                                                        @{Label="SenderAddress";Expression={$_.senderId}}, `
+                                                        @{Label="RecipientAddress";Expression={$_.recipientId}}, `
+                                                        @{Label="SenderPublicKey";Expression={$_.senderPublicKey}}, `
+                                                        @{Label="Signature";Expression={$_.signature}}, `
+                                                        @{Label="Fee";Expression={$_.fee}}, `
+                                                        @{label="Confirmations";Expression={$_.confirmations}}, `
+                                                        @{Label="BlockID";Expression={$_.blockId}}, `
+                                                        @{Label="Asset";Expression={$_.asset}}, `
+                                                        @{Label="Timestamp";Expression={$_.timestamp}}
     }
 }
 
