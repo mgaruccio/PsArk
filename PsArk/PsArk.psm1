@@ -1057,6 +1057,7 @@ Function Get-PsArkUnconfirmedTransactionById {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1127,6 +1128,7 @@ Function Get-PsArkUnconfirmedTransactionList {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network        
         )
 
@@ -1197,6 +1199,7 @@ Function Get-PsArkQueuedTransactionById {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1267,6 +1270,7 @@ Function Get-PsArkQueuedTransactionList {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network     
         )
 
@@ -1432,6 +1436,7 @@ Function Get-PsArkPeer {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1544,6 +1549,7 @@ Function Get-PsArkPeerList {
 
     Param(
         [parameter(ParameterSetName = "Network Selection")]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
         [parameter(ParameterSetName = "URL Selection")]
         [System.String] $URL
@@ -1670,6 +1676,7 @@ Function Get-PsArkBlockByID {
 
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1757,9 +1764,9 @@ Function Get-PsArkBlockByID {
 #>
 
 Function Get-PsArkBlockByHeight {
-
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1847,9 +1854,9 @@ Function Get-PsArkBlockByHeight {
 #>
 
 Function Get-PsArkBlockByPreviousBlockID {
-
     Param(
         [parameter(Mandatory = $True)]
+        [ValidateSet("DevNet","MainNet")]
         [System.String] $Network,
 
         [parameter(Mandatory = $True)]
@@ -1984,11 +1991,9 @@ Function Get-PsArkPeerList {
 
 
 Function Get-PsArkBlockList {
-
     Param(
         [parameter(Mandatory = $True)]
         [System.String] $URL,
-
         
         [parameter(Mandatory = $False)]
     [System.String] $TotalFee='',
