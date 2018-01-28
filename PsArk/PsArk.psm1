@@ -144,13 +144,13 @@ Import-Module "$($PsScriptroot)\Resources\nbitcoin.dll"
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    $Account = Get-PsArkAccount -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+    $Account = Get-PsArkAccount -Network "DevNet" -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 #>
 
 Function Get-PsArkAccount {
@@ -209,13 +209,13 @@ Function Get-PsArkAccount {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    $AccountBalance = Get-PsArkAccountBalance -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+    $AccountBalance = Get-PsArkAccountBalance -Network "DevNet" -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 
 #>
 
@@ -255,13 +255,13 @@ Function Get-PsArkAccountBalance {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    $AccountPublicKey = Get-PsArkAccountPublicKey -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+    $AccountPublicKey = Get-PsArkAccountPublicKey -Network "DevNet" -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 
 #>
 
@@ -321,13 +321,13 @@ Function Get-PsArkAccountPublicKey {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER Address
     Address of account.
 
 .EXAMPLE
-    $AccountVoteList = Get-PsArkAccountVoteList -URL https://api.arknode.net/ -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
+    $AccountVoteList = Get-PsArkAccountVoteList -Network "DevNet" -Address AHWHraW7xREemYCtxRx4YR2paiqGtgrX2M
 
 #>
 
@@ -674,10 +674,10 @@ Function Add-PsArkAccountSecondSignature {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
-    Get-PsArkLoadingStatus -URL https://api.arknode.net/
+    Get-PsArkLoadingStatus -Network "DevNet"
 #>
 
 Function Get-PsArkLoadingStatus {
@@ -730,10 +730,10 @@ Lisk is different.
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
-    Get-PsArkSyncStatus -URL https://api.arknode.net/
+    Get-PsArkSyncStatus -Network "DevNet"
 #>
 
 Function Get-PsArkSyncStatus {
@@ -769,10 +769,10 @@ Function Get-PsArkSyncStatus {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
-    Get-PsArkBlockReceiptStatus -URL https://api.arknode.net/
+    Get-PsArkBlockReceiptStatus -Network "DevNet"
 #>
 
 Function Get-PsArkBlockReceiptStatus {
@@ -828,10 +828,10 @@ Function Get-PsArkBlockReceiptStatus {
 
 .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
-    Get-PsArkTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
+    Get-PsArkTransactionById -Network "DevNet" -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
 #>
 
 Function Get-PsArkTransactionById {
@@ -903,7 +903,7 @@ Function Get-PsArkTransactionById {
 
     .PARAMETER Network
     String reprecenting the network on which to make the request
-    Curently Accepts "Devnet" and "MainNet"
+    Curently Accepts "DevNet" and "MainNet"
 
     .PARAMETER BlockId
         Id of the block you would like to search for transactions.
@@ -930,7 +930,7 @@ Function Get-PsArkTransactionById {
         sort order, valid options are: asc,desc
 
     .EXAMPLE
-       Get-PsArkTransactionList -URL https://api.arknode.net/ -SenderId AUexKjGtgsSpVzPLs6jNMM6vJ6znEVTQWK -ResultSetSize 2
+       Get-PsArkTransactionList -Network "DevNet" -SenderId AUexKjGtgsSpVzPLs6jNMM6vJ6znEVTQWK -ResultSetSize 2
 #>
 Function Get-PsArkTransactionList {
     Param(
@@ -1043,13 +1043,14 @@ Function Get-PsArkTransactionList {
         Timestamp         : Integer timestamp of transaction. [Int32]
 
 .PARAMETER Network
-    Ark network selection, accepts "DevNet" and "MainNet"
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER ID 
     ID of the transaction to get information on
 
 .EXAMPLE
-    Get-PsArkUnconfirmedTransactionById -URL https://api.arknode.net/ -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
+    Get-PsArkUnconfirmedTransactionById -Network "DevNet" -ID d536c5f30181e9d0771a00f322f25cc42c5a143fe5ce170b91a599912df20228
 #>
 
 Function Get-PsArkUnconfirmedTransactionById {
@@ -1115,7 +1116,8 @@ Function Get-PsArkUnconfirmedTransactionById {
         Timestamp         : Integer timestamp of transaction. [Int32]
 
 .PARAMETER Network
-    Network on which to run the query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkUnconfirmedTransactionList -Network "DevNet"
@@ -1181,7 +1183,8 @@ Function Get-PsArkUnconfirmedTransactionList {
         Timestamp         : Integer timestamp of transaction. [Int32]
 
 .PARAMETER Network
-    Network on which to run the API Query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER ID 
     ID of the transaction to get information on
@@ -1253,7 +1256,8 @@ Function Get-PsArkQueuedTransactionById {
         Timestamp         : Integer timestamp of transaction. [Int32]
 
 .PARAMETER Network
-    Network on which to run the query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
     Get-PsArkUnconfirmedTransactionList -Network "Devnet"
@@ -1297,7 +1301,8 @@ Function Get-PsArkQueuedTransactionList {
     .DESCRIPTION
         Sends a transaction on the specified network and retuns the transaction ID as a string
     .PARAMETER Network
-        A string specifying the network to send the transaction on.  Accepts "DevNet" or "MainNet"
+        String reprecenting the network on which to make the request
+        Curently Accepts "DevNet" and "MainNet"
     .PARAMETER Secret
         Passphrase for the account to send ARK from
     .PARAMETER Amount
@@ -1409,7 +1414,8 @@ Function Send-PsArkTransaction {
         Many others Status are possible, see https://github.com/blakeembrey/popsicle#errors for more infos.
 
 .PARAMETER Network
-    Network on which to run the Query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER IP
     IP of the chosen peer.
@@ -1526,7 +1532,8 @@ Ark is simpler. All peers are returned and filtering is done in native language.
         ETIMEOUT      : Request has exceeded the allowed timeout
 
 .PARAMETER Network
-    Address of the target full node server processing the API query.
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
     $PeerList = Get-PsArkPeerList -Network "DevNet"
@@ -1648,7 +1655,8 @@ Function Find-PsArkPeer {
         PayloadHash              : Payload Hash. [Int32]
 
 .PARAMETER Network
-    Network on which to run the query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER ID
     BlockID matching the requested block.
@@ -1737,7 +1745,8 @@ Function Get-PsArkBlockByID {
         PayloadHash              : Payload Hash. [Int32]
 
 .PARAMETER Network
-    The network on which to run the query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER Height
     Block Height matching the requested block.
@@ -1826,7 +1835,8 @@ Function Get-PsArkBlockByHeight {
         PayloadHash              : Payload Hash. [Int32]
 
 .PARAMETER Network
-    Network on which to run the query
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .PARAMETER ID
     Previous Block ID matching the requested block.
@@ -1937,8 +1947,9 @@ Response
         EUNAVAILABLE  : Unable to connect to the remote URL.
         ETIMEOUT      : Request has exceeded the allowed timeout
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    String reprecenting the network on which to make the request
+    Curently Accepts "DevNet" and "MainNet"
 
 .EXAMPLE
     $PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
