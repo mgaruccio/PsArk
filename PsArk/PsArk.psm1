@@ -1525,22 +1525,28 @@ Ark is simpler. All peers are returned and filtering is done in native language.
         EUNAVAILABLE  : Unable to connect to the remote URL.
         ETIMEOUT      : Request has exceeded the allowed timeout
 
-.PARAMETER URL
+.PARAMETER Network
     Address of the target full node server processing the API query.
 
 .EXAMPLE
-    $PeerList = Get-PsArkPeerList -URL https://api.arknode.net/
+    $PeerList = Get-PsArkPeerList -Network "DevNet"
 
 #>
 
 Function Get-PsArkPeerList {
 
     Param(
-        [parameter(Mandatory = $True)]
+        [parameter(ParameterSetName = "Network Selection")]
+        [System.String] $Network,
+        [parameter(ParameterSetName = "URL Selection")]
         [System.String] $URL
         )
+    if($Network) {
+        $Peer = Find-PsArkPeer -Network $Network
+        $URL = "$($Peer.IP):$($Peer.Port)"
+    }
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/peers' )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/peers' )
     if( $Output.success -eq $True )
     {
         $Output.peers | Select-Object -Property @{Label="IP";Expression={$_.ip}}, `
@@ -1587,7 +1593,7 @@ Function Find-PsArkPeer {
 
     while (!$PeerList) {
         $InitialSeed = Get-Random -InputObject $Selectednetwork.peers
-        $PeerList =  Get-PsArkPeerList -URL "$InitialSeed/"
+        $PeerList =  Get-PsArkPeerList -URL "$InitialSeed"
     }
     $currentVersion = $PeerList |
         Where-Object -FilterScript {$_.Version -like "*.*.*"} |

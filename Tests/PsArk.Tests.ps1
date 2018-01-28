@@ -393,10 +393,12 @@ InModuleScope PsArk {
                 }
             )
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SamplePeers} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/peers"}
+        Mock Invoke-PsArkApiCall {Return $SamplePeers} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/peers"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Peers = Get-PsArkPeerList -URL "http://mainnetURL.com/"
+        $Peers = Get-PsArkPeerList -Network "DevNet"
 
         It "Queries the provided URL for a list of peers" {
             Assert-VerifiableMock
@@ -404,6 +406,21 @@ InModuleScope PsArk {
         It "Returns an array of peers" {
             $Peers[1].IP | Should -Be "ipAddress"
             $Peers[0].status | Should -Be "status"
+        }
+    }
+    Describe "Find-PsArkPeer" {
+        $SamplePeerList = Import-Clixml ".\Tests\SampleObjects\PeerList.xml"
+        
+        Mock Get-PsArkPeerList {Return $SamplePeerList} -ModuleName "PsArk" -Verifiable -ParameterFilter {($URL -like "*.*.*.*:4002")}
+
+        $NewPeer = Find-PsArkPeer -Network "Devnet"
+
+        It "Queries PsArkPeerList and Peer endpoints to get a currently working api end point" {
+            Assert-VerifiableMock
+        }
+        It "Returns a peer" {
+            $NewPeer.Port | Should -Be 4002
+            $Newpeer.Version | Should -BeLike "1.*.*"
         }
     }
     Describe "Get-PsArkBlockByID" {
@@ -471,22 +488,6 @@ InModuleScope PsArk {
             $Block.ID | Should -Be "blockID"
             $Block.version | Should -Be "version"
             $Block.height | Should -Be 723647
-        }
-    }
-
-    Describe "Find-PsArkPeer" {
-        $SamplePeerList = Import-Clixml ".\Tests\SampleObjects\PeerList.xml"
-        
-        Mock Get-PsArkPeerList {Return $SamplePeerList} -ModuleName "PsArk" -Verifiable -ParameterFilter {($URL -like "*.*.*.*:4002/")}
-
-        $NewPeer = Find-PsArkPeer -Network "Devnet"
-
-        It "Queries PsArkPeerList and Peer endpoints to get a currently working api end point" {
-            Assert-VerifiableMock
-        }
-        It "Returns a peer" {
-            $NewPeer.Port | Should -Be 4002
-            $Newpeer.Version | Should -BeLike "1.*.*"
         }
     }
     
