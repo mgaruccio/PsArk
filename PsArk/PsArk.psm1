@@ -1647,14 +1647,14 @@ Function Find-PsArkPeer {
 
         PayloadHash              : Payload Hash. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the query
 
 .PARAMETER ID
     BlockID matching the requested block.
 
 .EXAMPLE
-    $BlockInfo = Get-PsArkBlockByID -URL https://api.arknode.net/ -ID 5330406843623440624
+    $BlockInfo = Get-PsArkBlockByID -Network "DevNet" -ID 5330406843623440624
 
 #>
 
@@ -1662,13 +1662,15 @@ Function Get-PsArkBlockByID {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $ID
         )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks/get?id=' + $ID )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/blocks/get?id=' + $ID )
     if( $Output.success -eq $True )
     {
         $Output.block | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
@@ -1734,14 +1736,14 @@ Function Get-PsArkBlockByID {
 
         PayloadHash              : Payload Hash. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    The network on which to run the query
 
 .PARAMETER Height
     Block Height matching the requested block.
 
 .EXAMPLE
-    $BlockInfo = Get-PsArkBlockByHeight -URL https://api.arknode.net/ -Height 723647
+    $BlockInfo = Get-PsArkBlockByHeight -Network "DevNet" -Height 723647
 
 #>
 
@@ -1749,13 +1751,15 @@ Function Get-PsArkBlockByHeight {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $Height
         )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?height=' + $Height )
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/blocks?height=' + $Height )
     if( $Output.success -eq $True )
     {
         $Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `
@@ -1821,14 +1825,14 @@ Function Get-PsArkBlockByHeight {
 
         PayloadHash              : Payload Hash. [Int32]
 
-.PARAMETER URL
-    Address of the target full node server processing the API query.
+.PARAMETER Network
+    Network on which to run the query
 
 .PARAMETER ID
     Previous Block ID matching the requested block.
 
 .EXAMPLE
-    $BlockInfo = Get-PsArkBlockByPreviousBlockID -URL https://api.arknode.net/ -ID 443216682634022798
+    $BlockInfo = Get-PsArkBlockByPreviousBlockID -Network "DevNet" -ID 443216682634022798
 
 #>
 
@@ -1836,13 +1840,16 @@ Function Get-PsArkBlockByPreviousBlockID {
 
     Param(
         [parameter(Mandatory = $True)]
-        [System.String] $URL,
+        [System.String] $Network,
 
         [parameter(Mandatory = $True)]
         [System.String] $ID
         )
 
-    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'api/blocks?previousBlock=' + $ID )
+    $Peer = Find-PsArkPeer -Network $Network
+    $URL = "$($Peer.IP):$($Peer.Port)"
+    
+    $Private:Output = Invoke-PsArkApiCall -Method Get -URL $( $URL+'/api/blocks?previousBlock=' + $ID )
     if( $Output.success -eq $True )
     {
         $Output.blocks | Select-Object -Property @{Label="ID";Expression={$_.id}}, `

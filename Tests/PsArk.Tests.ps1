@@ -431,10 +431,12 @@ InModuleScope PsArk {
                 version = "version"
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/blocks/get?id=blockID"}
+        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/blocks/get?id=blockID"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Block = Get-PsArkBlockByID -URL "http://mainnetURL.com/" -ID "blockID"
+        $Block = Get-PsArkBlockByID -Network "Devnet" -ID "blockID"
 
         It "Queries the specified URL for a block with the specified ID" {
             Assert-VerifiableMock
@@ -453,10 +455,12 @@ InModuleScope PsArk {
                 height = 723647
             }
         }
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/blocks?height=723647"}
+        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/blocks?height=723647"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
 
-        $Block = Get-PsArkBlockByHeight -URL "http://mainnetURL.com/" -Height 723647
+        $Block = Get-PsArkBlockByHeight -Network "DevNet" -Height 723647
 
         It "Queries the specified URL for a block with the specified ID" {
             Assert-VerifiableMock
@@ -476,10 +480,12 @@ InModuleScope PsArk {
                 height = 723647
             }
         }
-        
-        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -eq "http://mainnetURL.com/api/blocks?previousBlock=blockID"}
+        $SamplePeer = Import-Clixml -Path ".\Tests\SampleObjects\Peer.xml"
 
-        $Block = Get-PsArkBlockByPreviousBlockID -URL "http://mainnetURL.com/" -ID "blockID"
+        Mock Invoke-PsArkApiCall {Return $SampleBlock} -ModuleName "PsArk" -Verifiable -ParameterFilter {$URL -like "*.*.*.*:4002/api/blocks?previousBlock=blockID"}
+        Mock Find-PsArkPeer {return $SamplePeer} -ModuleName "PsArk" -Verifiable
+
+        $Block = Get-PsArkBlockByPreviousBlockID -Network "DevNet" -ID "blockID"
 
         It "Queries the provided URL for the block after the indicated block" {
             Assert-VerifiableMock
